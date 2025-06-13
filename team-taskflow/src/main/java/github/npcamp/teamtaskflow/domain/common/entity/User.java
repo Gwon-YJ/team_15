@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.common.entity;
 
+import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +23,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    private Boolean isDeleted = false;
 
     @Column(nullable = false, unique = true)
     private String email;
