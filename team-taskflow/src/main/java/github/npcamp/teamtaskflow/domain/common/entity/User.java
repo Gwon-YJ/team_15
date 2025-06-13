@@ -1,6 +1,5 @@
 package github.npcamp.teamtaskflow.domain.common.entity;
 
-//import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,18 +26,17 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-// TODO: 이넘 추가 하면 주석해제
-//    @Column(nullable = false)
-//    @Enumerated(value = EnumType.STRING)
-////    private UserRoleEnum role;
-//
-//
-//    public User(String userId, String username, String password, String email, UserRoleEnum role) {
-//        this.userId = userId;
-//        this.username = username;
-//        this.password = password;
-//        this.email = email;
-//        this.role = role;
-//    }
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
+
+    public User(String userId, String username, String password, String email, UserRoleEnum role) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 
 }
