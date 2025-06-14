@@ -34,5 +34,9 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, message, null);
     }
 
+    public static <T> ApiResponse<T> failure(T data) {
+        return new ApiResponse<>(false, "요청이 실패했습니다.", data);
+    }
+
 }
 
