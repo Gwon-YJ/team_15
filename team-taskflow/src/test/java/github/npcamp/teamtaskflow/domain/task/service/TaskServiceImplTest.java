@@ -5,6 +5,7 @@ import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.TaskPriority;
 import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.TaskDetailResponseDto;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +40,6 @@ public class TaskServiceImplTest {
 
         User user = mock();
         ReflectionTestUtils.setField(user, "id", dto.getAssigneeId());
-        // TODO: 기존 서비스 로직 변경되면 추가로 변경
 
         Task savedTask = Task.builder()
                 .title(dto.getTitle())
@@ -62,4 +64,36 @@ public class TaskServiceImplTest {
         assertEquals(dto.getDueDate(), responseDto.getDueDate());
     }
 
+    @Test
+    void 태스크단건_정상조회() {
+        // given
+        long taskId = 1L;
+
+        User user = mock();
+        ReflectionTestUtils.setField(user, "username", "테스트 이름");
+
+        Task task = Task.builder()
+                .assignee(user)
+                .build();
+
+        given(taskRepository.findById(anyLong())).willReturn(Optional.of(task));
+
+        // when
+        TaskDetailResponseDto res = taskService.getTask(taskId);
+
+        // then
+        assertNotNull(res);
+    }
+
+    @Test
+    void 태스크단건_조회실패() {
+        // given
+        long taskId = 1L;
+
+        // when
+        given(taskRepository.findById(anyLong())).willReturn(null);
+
+        // then
+        assertThrows(NullPointerException.class, () -> taskService.getTask(taskId));
+    }
 }
