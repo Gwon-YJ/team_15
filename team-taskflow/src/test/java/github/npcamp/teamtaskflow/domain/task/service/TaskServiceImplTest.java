@@ -89,11 +89,9 @@ public class TaskServiceImplTest {
     void 태스크단건_조회실패() {
         // given
         long taskId = 1L;
-
-        // when
         given(taskRepository.findById(anyLong())).willReturn(null);
 
-        // then
+        // when & then
         assertThrows(NullPointerException.class, () -> taskService.getTask(taskId));
     }
 }
