@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.dashboard.controller;
 
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.service.DashboardService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -25,5 +28,10 @@ public class DashboardController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(dto));
     }
 
-
+    // 상태별 태스크 수 조회
+    @GetMapping("/status")
+    public ResponseEntity<ApiResponse<List<TaskStatusResponseDto>>> getStatusTasks(){
+        List<TaskStatusResponseDto> dto = dashboardService.getStatusTasks();
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(dto));
+    }
 }
