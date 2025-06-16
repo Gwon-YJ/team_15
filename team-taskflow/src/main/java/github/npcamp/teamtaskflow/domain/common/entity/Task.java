@@ -47,4 +47,16 @@ public class Task extends BaseEntity {
 
     private LocalDateTime deletedAt;
 
+    public void updateTask(String title, String content, TaskPriority priority, User user, LocalDateTime dueDate) {
+        this.title = title;
+        this.content = content;
+        this.priority = priority;
+        this.assignee = user;
+        this.dueDate = dueDate;
+    }
+
+    public void updateStatus(TaskStatus newStatus) {
+        this.status = newStatus;
+    }
+
 }
