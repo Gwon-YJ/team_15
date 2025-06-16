@@ -1,4 +1,4 @@
-package github.npcamp.teamtaskflow.domain.user.dto;
+package github.npcamp.teamtaskflow.domain.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class LoginResponseDto {
-    String token;
+   private String token;
 }

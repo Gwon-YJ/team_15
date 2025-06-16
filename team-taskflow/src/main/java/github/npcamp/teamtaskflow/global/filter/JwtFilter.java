@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.global.filter;
 
+import github.npcamp.teamtaskflow.domain.auth.service.LogOutService;
 import github.npcamp.teamtaskflow.global.utils.JwtUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import java.io.IOException;
 public class JwtFilter implements Filter {
 
     private final JwtUtil jwtUtil;
+    private final LogOutService logOutService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -31,8 +33,8 @@ public class JwtFilter implements Filter {
 
 
         // 처음 로그인 하는 거야? 그럼 JWT 토큰이 없을 것이니 토큰 먼저 발급 받아!
-        if(requestURI.equals("/api/login")) {
-            chain.doFilter(request,response);
+        if (requestURI.equals("/api/login")) {
+            chain.doFilter(request, response);
             return;
         }
 
@@ -71,10 +73,10 @@ public class JwtFilter implements Filter {
         username = jwtUtil.extractUsername(jwt);
 
         // 만약 요청한 API 가 관리자 전용 API 인 경우에
-        if(requestURI.startsWith("/api/admin")) {
+        if (requestURI.startsWith("/api/admin")) {
 
             // JWT에 관리자 권한이 있는지 확인
-            if(jwtUtil.hasRole(jwt,"ADMIN")) {
+            if (jwtUtil.hasRole(jwt, "ADMIN")) {
                 chain.doFilter(request, response);
             } else {
                 // 권한이 없으면 403 Forbidden 응답
@@ -83,26 +85,35 @@ public class JwtFilter implements Filter {
                 httpResponse.setContentType("application/json; charset=UTF-8");
                 httpResponse.getWriter().write("접근 권한이 없습니다.");
                 httpResponse.getWriter().flush();
+                return;
             }
-            return;
-        }
 
-        // 만약 요청한 API 가 사용자 전용 API 인 경우에
-        if(requestURI.startsWith("/api/user")) {
-
-            // JWT에 사용자 권한이 있는지 확인
-            if(jwtUtil.hasRole(jwt,"USER")) {
-                chain.doFilter(request, response);
-            } else {
-                // 권한이 없으면 403 Forbidden 응답
-                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
+            // 블랙리스트 확인 (로그아웃된 토큰인지)
+            if (logOutService.isTokenBlacklisted(jwt)) {
+                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                httpResponse.setCharacterEncoding("UTF-8");
+                httpResponse.setContentType("application/json; charset=UTF-8");
+                httpResponse.getWriter().write("{\"error\": \"로그아웃된 토큰입니다. 다시 로그인 해주세요.\"}");
+                httpResponse.getWriter().flush();
+                return;
             }
-            return;
+
+            // 만약 요청한 API 가 사용자 전용 API 인 경우에
+            if (requestURI.startsWith("/api/user")) {
+
+                // JWT에 사용자 권한이 있는지 확인
+                if (jwtUtil.hasRole(jwt, "USER")) {
+                    chain.doFilter(request, response);
+                } else {
+                    // 권한이 없으면 403 Forbidden 응답
+                    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
+                }
+                return;
+            }
+
+            // 전용 API가 아닌 일반 API의 경우
+            chain.doFilter(request, response);
+
         }
-
-        // 전용 API가 아닌 일반 API의 경우
-        chain.doFilter(request, response);
-
-
     }
 }

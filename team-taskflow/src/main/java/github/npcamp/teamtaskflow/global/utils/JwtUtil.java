@@ -1,6 +1,6 @@
 package github.npcamp.teamtaskflow.global.utils;
 
-import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
+import github.npcamp.teamtaskflow.domain.user.enums.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -46,6 +47,22 @@ public class JwtUtil {
         return extractAllClaims(token).getSubject();
     }
 
+
+    // 토큰에서 만료 시간(Expiration)을 밀리초 단위로 반환
+    public long getExpiration(String token) {
+        Claims claims = parseClaims(token);
+        Date expiration = claims.getExpiration();  // Date 타입 반환
+        long now = System.currentTimeMillis();
+        return expiration.getTime() - now;  // 남은 시간(밀리초) 반환
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
 
     /**
@@ -87,6 +104,15 @@ public class JwtUtil {
     public String extractRoles(String token) {
         return extractAllClaims(token).get("auth", String.class);
     }
+
+
+    public String extractBearerToken(String header) {
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);  // "Bearer " 길이만큼 잘라서 토큰만 반환
+        }
+        return header;
+    }
+
 
     /**
      * JWT 토큰에서 특정 역할이 포함되어 있는지 확인합니다.
@@ -130,6 +156,7 @@ public class JwtUtil {
         }
         return false; // 예외가 발생한 경우 토큰이 유효하지 않음
     }
+
 
 }
 
