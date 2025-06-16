@@ -35,10 +35,9 @@ public class Task extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
 
-    // TODO : User 엔티티 추가 시 주석 해제
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User assignee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User assignee;
 
     private LocalDateTime dueDate;
 
