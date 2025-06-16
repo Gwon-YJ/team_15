@@ -40,7 +40,7 @@ public class Comment extends BaseEntity{
     }
 
     // 수정
-    public void update(String content) {
+    public void updateComment(String content) {
         this.content = content;
     }
 
