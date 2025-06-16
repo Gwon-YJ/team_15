@@ -23,7 +23,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     public List<UserResponseDto> findUserList(UserRequestDto userRequestDto){
-        List<User> userList = userRepository.findAllByUserNameOrderByModifiedAtDesc(userRequestDto.getUserName());
+        List<User> userList = userRepository.findAllByUserNameOrderByUpdatedAtDesc(userRequestDto.getUserName());
         List<UserResponseDto> userDtoList = userList.stream().map(user -> new UserResponseDto(user)).collect(Collectors.toList());
         //없으면 빈 리스트를 반환합니다.
         return userDtoList;

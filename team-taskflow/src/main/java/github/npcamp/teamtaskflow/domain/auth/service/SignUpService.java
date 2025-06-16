@@ -2,8 +2,8 @@ package github.npcamp.teamtaskflow.domain.auth.service;
 
 import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.auth.dto.request.SignUpRequestDto;
-import github.npcamp.teamtaskflow.domain.user.enums.UserRoleEnum;
 import github.npcamp.teamtaskflow.domain.auth.repository.SignUpRepository;
+import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
 import github.npcamp.teamtaskflow.global.exception.CustomException;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
 import github.npcamp.teamtaskflow.global.utils.PasswordEncoder;
@@ -24,9 +24,10 @@ public class SignUpService {
 
         User user = new User(
                 signUpRequestDto.getUserName(),
-                passwordEncoder.encode(signUpRequestDto.getPassword()),
+                signUpRequestDto.getName(),
                 signUpRequestDto.getEmail(),
-                UserRoleEnum.USER
+                passwordEncoder.encode(signUpRequestDto.getPassword()),
+                signUpRequestDto.getRole()
         );
 
         signUpRepository.save(user);

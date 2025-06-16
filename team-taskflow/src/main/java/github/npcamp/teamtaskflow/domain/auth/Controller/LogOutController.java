@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogOutController {
 
     private final LogOutService logOutService;
+
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
