@@ -112,14 +112,14 @@ class DashboardServiceImplTest {
         List<TaskStatusResponseDto> list = dashboardService.getStatusTasks();
 
         // then
-        //반환된 list에서 filter로 TaskStatus.IN_PROGRESS값 꺼냄.
+        //반환된 list에서 filter로 TaskStatus.DONE 꺼냄.
         TaskStatusResponseDto todoDto= list.stream()
                 .filter(dto->dto.getStatus()==TaskStatus.DONE)
                 .findFirst()
                 .orElseThrow();
 
         //then
-        //꺼낸 IN_PROGRESS상태의 값이 3과 같은지 비교.
+        //꺼낸 DONE상태의 값이 3과 같은지 비교.
         assertThat(todoDto.getCount()).isEqualTo(2L);
     }
 
