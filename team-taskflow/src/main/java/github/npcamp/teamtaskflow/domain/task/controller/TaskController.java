@@ -1,9 +1,11 @@
 package github.npcamp.teamtaskflow.domain.task.controller;
 
-import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskRequestDto;
-import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskResponseDto;
-import github.npcamp.teamtaskflow.domain.task.dto.TaskResponseDto;
-import github.npcamp.teamtaskflow.domain.task.dto.TaskDetailResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.request.CreateTaskRequestDto;
+import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateStatusRequestDto;
+import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateTaskRequestDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.CreateTaskResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.service.TaskService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
 import jakarta.validation.Valid;
@@ -39,5 +41,25 @@ public class TaskController {
     public ResponseEntity<ApiResponse<Page<TaskResponseDto>>> getTasks(@PageableDefault(sort = "dueDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<TaskResponseDto> tasks = taskService.getTasks(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tasks));
+    }
+
+    @PutMapping("/{taskId}")
+    public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateTask(@PathVariable Long taskId,
+                                                                         @Valid @RequestBody UpdateTaskRequestDto req) {
+        TaskDetailResponseDto res = taskService.updateTask(taskId, req);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+    }
+
+    @PatchMapping("/{taskId}/status")
+    public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateStatus(@PathVariable Long taskId,
+                                                                           @Valid @RequestBody UpdateStatusRequestDto req) {
+        TaskDetailResponseDto res = taskService.updateStatus(taskId, req.getNewStatus());
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+    }
+
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long taskId) {
+        taskService.deleteTask(taskId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Task가 삭제되었습니다."));
     }
 }
