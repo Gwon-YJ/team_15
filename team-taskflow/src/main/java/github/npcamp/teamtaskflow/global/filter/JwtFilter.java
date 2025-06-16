@@ -62,7 +62,7 @@ public class JwtFilter implements Filter {
             httpResponse.getWriter().write("{\"error\": \"Unauthorized\"}");
         }
 
-        // 그럼 너가 가져오 JWT 토큰은 유효한 토큰이군! 통과!
+        // 그럼 너가 가져온 JWT 토큰은 유효한 토큰이군! 통과!
 
 
         // 이제부터는 JWT 토큰에 어떤 정보가 들어가 있는지 살펴보자!
