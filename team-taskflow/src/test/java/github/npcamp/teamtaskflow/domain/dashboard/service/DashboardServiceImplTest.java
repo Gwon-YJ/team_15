@@ -119,7 +119,7 @@ class DashboardServiceImplTest {
                 .orElseThrow();
 
         //then
-        //꺼낸 DONE상태의 값이 3과 같은지 비교.
+        //꺼낸 DONE상태의 값이 2과 같은지 비교.
         assertThat(todoDto.getCount()).isEqualTo(2L);
     }
 
