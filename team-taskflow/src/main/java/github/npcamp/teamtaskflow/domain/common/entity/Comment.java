@@ -25,9 +25,14 @@ public class Comment extends BaseEntity{
     @JoinColumn(name = "task_id", nullable = false)
     private Task task; // 할일과 다대일 관계로 join
 
+    //Todo: user domain 생성이후 만들기.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // user와도 다대일 관계로 join
+
+    @Column(nullable = false)
+    private String username; // 그냥 문자열로 변경
+
 
     @Column(nullable = false)
     private String content; // 댓글에 들어갈 내용
