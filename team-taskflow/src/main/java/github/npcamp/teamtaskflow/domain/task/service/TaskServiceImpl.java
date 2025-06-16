@@ -1,12 +1,15 @@
 package github.npcamp.teamtaskflow.domain.task.service;
 
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
+import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.TaskDetailResponseDto;
 import github.npcamp.teamtaskflow.domain.task.exception.TaskNotFoundException;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
+import github.npcamp.teamtaskflow.domain.user.UserRepository;
+import github.npcamp.teamtaskflow.domain.user.exception.UserNotFoundException;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
-//    private final UserService userService; TODO
-//    private final ActivityLogService activityLogService; TODO
+    private final UserRepository userRepository;
 
     /**
      * Task 생성
@@ -29,13 +31,14 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public CreateTaskResponseDto createTask(CreateTaskRequestDto req) {
 
-//        User assignee = userService.findById(req.getAssigneeId()); TODO
+        User assignee = userRepository.findById(req.getAssigneeId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         Task task = Task.builder()
                 .title(req.getTitle())
                 .content(req.getContent())
                 .priority(req.getPriority())
-//                .assignee(assignee) TODO
+                .assignee(assignee)
                 .dueDate(req.getDueDate())
                 .build();
 
