@@ -1,8 +1,8 @@
 package github.npcamp.teamtaskflow.domain.dashboard;
 
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
-import github.npcamp.teamtaskflow.domain.dashboard.repository.DashboardRepository;
 import github.npcamp.teamtaskflow.domain.dashboard.service.DashboardServiceImpl;
+import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 class DashboardServiceTest {
 
     @Mock
-    DashboardRepository dashboardRepository;
+    TaskRepository taskRepository;
 
     @InjectMocks
     DashboardServiceImpl dashboardService;
@@ -25,13 +25,13 @@ class DashboardServiceTest {
     @Test
     void 대시보드_전체_태스크_수_조회_테스트() {
         // given
-        when(dashboardRepository.countAllTasks()).thenReturn(3L);
+        when(taskRepository.countByIsDeletedFalse()).thenReturn(3L);
 
         // when
         TotalTaskResponseDto result = dashboardService.getTotalTasks();
 
         // then
         assertThat(result.getTotalTasks()).isEqualTo(3L);
-        verify(dashboardRepository).countAllTasks();
+        verify(taskRepository).countByIsDeletedFalse();
     }
 }

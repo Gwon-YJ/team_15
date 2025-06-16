@@ -1,7 +1,7 @@
 package github.npcamp.teamtaskflow.domain.dashboard.service;
 
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
-import github.npcamp.teamtaskflow.domain.dashboard.repository.DashboardRepository;
+import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 public class DashboardServiceImpl implements DashboardService{
 
-    private final DashboardRepository dashboardRepository;
+    private final TaskRepository taskRepository;
 
     @Override
     public TotalTaskResponseDto getTotalTasks() {
-        long totalTasks = dashboardRepository.countAllTasks();
+        long totalTasks = taskRepository.countByIsDeletedFalse();
         return new TotalTaskResponseDto(totalTasks);
     }
 }
