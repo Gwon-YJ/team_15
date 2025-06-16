@@ -1,14 +1,20 @@
 package github.npcamp.teamtaskflow.domain.common.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comment")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@SQLDelete(sql = "UPDATE comment SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "is_deleted = false")
 public class Comment extends BaseEntity{
 
     @Id
@@ -31,13 +37,6 @@ public class Comment extends BaseEntity{
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt; // 삭제 날짜 (soft delete 위해서)
-
-    // 생성자
-    public Comment(Task task, User user, String content) {
-        this.task = task;
-        this.user = user;
-        this.content = content;
-    }
 
     // 수정
     public void updateComment(String content) {
