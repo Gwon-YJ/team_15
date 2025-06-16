@@ -5,7 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 
-//조회만 하기 때문에 JPQL 사용
+//JPQL 사용
 @Repository
 public class DashboardRepositoryImpl implements DashboardRepository{
 
@@ -14,6 +14,6 @@ public class DashboardRepositoryImpl implements DashboardRepository{
 
     @Override
     public long countAllTasks() {
-        return em.createQuery("SELECT COUNT(*) FROM Task",Long.class).getSingleResult();
+        return em.createQuery("SELECT COUNT(t) FROM Task t WHERE t.isDeleted=false",Long.class).getSingleResult();
     }
 }
