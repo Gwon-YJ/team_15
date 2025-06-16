@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.dashboard.controller;
 
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.service.DashboardService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
@@ -25,5 +26,10 @@ public class DashboardController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(dto));
     }
 
-
+    // 상태별 태스크 수 조회
+    @GetMapping("/status")
+    public ResponseEntity<ApiResponse<TaskStatusResponseDto>> getStatusTasks(){
+        TaskStatusResponseDto dto = dashboardService.getStatusTasks();
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(dto));
+    }
 }
