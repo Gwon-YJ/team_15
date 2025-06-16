@@ -20,7 +20,6 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
 //    private final UserService userService; TODO
-//    private final CommentService commentService; TODO
 //    private final ActivityLogService activityLogService; TODO
 
     /**
@@ -55,9 +54,6 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException(ErrorCode.TASK_NOT_FOUND));
 
-        // taskId로 커멘트 리스트를 찾아오기 TODO
-
-//        return TaskResponseDto.toDto(task, comments); TODO
         return TaskDetailResponseDto.toDto(task);
     }
 

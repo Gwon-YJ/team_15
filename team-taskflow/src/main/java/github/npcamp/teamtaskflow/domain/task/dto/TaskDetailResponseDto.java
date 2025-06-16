@@ -23,9 +23,7 @@ public class TaskDetailResponseDto {
     private final LocalDateTime dueDate;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-//    private final List<CommentResponseDto> comments; TODO
 
-    //    public static TaskResponseDto toDto(Task task, List<CommentResponseDto> comments)
     public static TaskDetailResponseDto toDto(Task task) {
         return TaskDetailResponseDto.builder()
                 .id(task.getId())
@@ -37,7 +35,6 @@ public class TaskDetailResponseDto {
                 .dueDate(task.getDueDate())
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
-//                .comments(comments) TODO
                 .build();
     }
 
