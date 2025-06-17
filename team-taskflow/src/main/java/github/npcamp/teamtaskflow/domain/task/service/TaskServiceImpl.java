@@ -10,12 +10,13 @@ import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.exception.TaskException;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
-import github.npcamp.teamtaskflow.domain.user.UserRepository;
-import github.npcamp.teamtaskflow.domain.user.exception.UserNotFoundException;
+import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
+import github.npcamp.teamtaskflow.domain.user.exception.UserException;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,7 @@ public class TaskServiceImpl implements TaskService {
 
         // 유저 조회
         User assignee = userRepository.findById(req.getAssigneeId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
         // Task 생성 (기본 Status는 "할 일")
         Task task = Task.builder()
@@ -91,7 +92,7 @@ public class TaskServiceImpl implements TaskService {
 
         // User 조회
         User assignee = userRepository.findById(req.getAssigneeId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND)); // 추후 수정 예정
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND)); // 추후 수정 예정
 
         // Task 수정 (PUT)
         task.updateTask(req.getTitle(), req.getContent(), req.getPriority(), assignee, req.getDueDate());
@@ -130,9 +131,9 @@ public class TaskServiceImpl implements TaskService {
      * Task 삭제
      * soft delete
      */
-    // TODO: 접근 권한 설정
     @Override
     @Transactional
+    @Secured("ROLE_ADMIN")
     public void deleteTask(Long taskId) {
         Task task = findTaskByIdOrElseThrow(taskId);
         taskRepository.delete(task);

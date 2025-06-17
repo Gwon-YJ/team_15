@@ -1,5 +1,11 @@
 package github.npcamp.teamtaskflow.domain.task.controller;
 
+import github.npcamp.teamtaskflow.domain.task.TaskStatus;
+import github.npcamp.teamtaskflow.domain.user.exception.UserException;
+import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
+import github.npcamp.teamtaskflow.global.exception.ErrorCode;
+import github.npcamp.teamtaskflow.domain.common.entity.User;
+
 import github.npcamp.teamtaskflow.domain.task.dto.request.CreateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateStatusRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateTaskRequestDto;
@@ -16,6 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,9 +33,14 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateTaskResponseDto>> createTask(@Valid @RequestBody CreateTaskRequestDto req) {
+    public ResponseEntity<ApiResponse<CreateTaskResponseDto>> createTask(@Valid @RequestBody CreateTaskRequestDto req,
+                                                                         @AuthenticationPrincipal Long currentUserId) {
+
+        System.out.println(currentUserId.toString());
+
         CreateTaskResponseDto res = taskService.createTask(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res));
     }
@@ -38,7 +52,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<TaskResponseDto>>> getTasks(@PageableDefault(sort = "dueDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<TaskResponseDto>>> getTasks(@PageableDefault(sort = "dueDate", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                       @RequestParam(required = false) TaskStatus status) {
         Page<TaskResponseDto> tasks = taskService.getTasks(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tasks));
     }
@@ -58,6 +73,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long taskId) {
         taskService.deleteTask(taskId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Task가 삭제되었습니다."));

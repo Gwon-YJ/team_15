@@ -1,6 +1,6 @@
-package github.npcamp.teamtaskflow.global.utils;
+package github.npcamp.teamtaskflow.domain.auth.utils;
 
-import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
+import github.npcamp.teamtaskflow.domain.user.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -17,10 +17,10 @@ import java.util.Date;
 public class JwtUtil {
     // JWT 토큰의 접두사
     public static final String BEARER_PREFIX = "Bearer ";
-    // JWT 토큰의 만료 시간 (밀리초 단위, 여기서는 60분)
-    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
     // JWT 서명 알고리즘
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    @Value("${jwt.token-time}")
+    private long TOKEN_TIME;
     // 애플리케이션 설정 파일에서 주입받은 비밀 키
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -39,6 +39,7 @@ public class JwtUtil {
 
     /**
      * JWT 토큰에서 사용자 이름을 추출합니다.
+     *
      * @param token JWT 토큰
      * @return 사용자 이름
      */
@@ -46,10 +47,9 @@ public class JwtUtil {
         return extractAllClaims(token).getSubject();
     }
 
-
-
     /**
      * JWT 토큰에서 모든 클레임을 추출합니다.
+     *
      * @param token JWT 토큰
      * @return 클레임 객체
      */
@@ -62,16 +62,18 @@ public class JwtUtil {
 
     /**
      * JWT 토큰을 생성합니다.
+     *
      * @param username 사용자 이름
      * @param userRole 사용자의 역할 (권한)
      * @return 생성된 JWT 토큰
      */
-    public String generateToken(String username, UserRoleEnum userRole) {
+    public String generateToken(Long userId, String username, UserRoleEnum userRole) {
         Date date = new Date();
-// Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username) // 사용자 식별자 (ID)
+                        .claim("userId", userId) // 사용자 고유 Id
                         .claim("auth", userRole) // 사용자 권한 (역할)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간 설정
                         .setIssuedAt(date) // 발급 시간 설정
@@ -80,7 +82,18 @@ public class JwtUtil {
     }
 
     /**
+     * JWT 토큰에서 userId 정보를 추출합니다.
+     *
+     * @param token
+     * @return
+     */
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    /**
      * JWT 토큰에서 역할(권한) 정보를 추출합니다.
+     *
      * @param token JWT 토큰
      * @return 역할 정보 (문자열)
      */
@@ -90,8 +103,9 @@ public class JwtUtil {
 
     /**
      * JWT 토큰에서 특정 역할이 포함되어 있는지 확인합니다.
+     *
      * @param token JWT 토큰
-     * @param role 확인할 역할
+     * @param role  확인할 역할
      * @return 역할 포함 여부 (true: 포함됨, false: 포함되지 않음)
      */
     public boolean hasRole(String token, String role) {
@@ -132,4 +146,3 @@ public class JwtUtil {
     }
 
 }
-
