@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,11 +40,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(ApiResponse.failure(e.getErrorCode().getMsg()));
     }
 
+    // @Secured 어노테이션
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException e) {
+        log.error("Exception occurred: ", e); // 전체 스택 트레이스 로그 출력
+        return ResponseEntity.status(ErrorCode.ACCESS_DENIED.getStatus()).body(ApiResponse.failure(ErrorCode.ACCESS_DENIED.getMsg()));
+    }
+
     // 예상하지 못한 모든 일반 예외 처리 (마지막 방어선)
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         log.error("Unexpected error: ", e); // 전체 스택 트레이스 로그 출력
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.getMsg()));
+        return ResponseEntity.status(ErrorCode.INVALID_STATUS_TRANSITION.getStatus()).body(ApiResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.getMsg()));
     }
 
 }
