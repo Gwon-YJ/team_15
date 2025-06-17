@@ -6,6 +6,8 @@ import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.CreateTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
+import github.npcamp.teamtaskflow.domain.common.aop.Logging;
+import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.task.service.TaskService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
 import jakarta.validation.Valid;
@@ -26,6 +28,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
+    @Logging(ActivityType.TASK_CREATED)
     public ResponseEntity<ApiResponse<CreateTaskResponseDto>> createTask(@Valid @RequestBody CreateTaskRequestDto req) {
         CreateTaskResponseDto res = taskService.createTask(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res));
@@ -44,6 +47,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
+    @Logging(ActivityType.TASK_UPDATED)
     public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateTask(@PathVariable Long taskId,
                                                                          @Valid @RequestBody UpdateTaskRequestDto req) {
         TaskDetailResponseDto res = taskService.updateTask(taskId, req);
@@ -51,6 +55,7 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/status")
+    @Logging(ActivityType.TASK_STATUS_CHANGED)
     public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateStatus(@PathVariable Long taskId,
                                                                            @Valid @RequestBody UpdateStatusRequestDto req) {
         TaskDetailResponseDto res = taskService.updateStatus(taskId, req.getNewStatus());
@@ -58,6 +63,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
+    @Logging(ActivityType.TASK_DELETED)
     public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long taskId) {
         taskService.deleteTask(taskId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Task가 삭제되었습니다."));
