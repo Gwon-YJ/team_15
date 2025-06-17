@@ -1,45 +1,46 @@
 package github.npcamp.teamtaskflow.domain.common.entity;
 
-import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
+import github.npcamp.teamtaskflow.domain.user.UserRoleEnum;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
 @Table(name = "users")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+@AllArgsConstructor
+@Builder
+@SQLDelete(sql = "UPDATE users SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "is_deleted = false")
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String userId;
-
-    @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private String password;
-
-    private Boolean isDeleted = false;
+    @Column(nullable = false, unique = true)
+    private String userName;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    @Builder.Default
+    private UserRoleEnum role = UserRoleEnum.USER;
 
+    @Builder.Default
+    private Boolean isDeleted = false;
 
-    public User(String userId, String username, String password, String email, UserRoleEnum role) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
+    private LocalDateTime deletedAt;
 
 }
