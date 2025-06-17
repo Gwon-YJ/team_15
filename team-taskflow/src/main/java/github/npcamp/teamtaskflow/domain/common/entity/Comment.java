@@ -47,11 +47,4 @@ public class Comment extends BaseEntity{
     public void updateComment(String content) {
         this.content = content;
     }
-
-    // 삭제(soft delete)
-    public void softDelete() {
-        this.isDeleted = true;
-        this.deletedAt = LocalDateTime.now();
-    }
-
 }
