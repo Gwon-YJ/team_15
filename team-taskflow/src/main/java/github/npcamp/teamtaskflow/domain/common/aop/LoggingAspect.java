@@ -42,8 +42,7 @@ public class LoggingAspect {
             return joinPoint.proceed();
         }
 
-        // Todo
-        Long userId = getCurrentUserId(); // 시큐리티 적용 되면 바꿀 에정
+        Long userId = getCurrentUserId();
 
         String ip = request.getRemoteAddr();
         String method = request.getMethod();
@@ -58,7 +57,12 @@ public class LoggingAspect {
         String message = null; // 로그에 기록할 메세지
         Long targetId; // 대상 엔티티 ID
 
-         if (activityType == ActivityType.TASK_STATUS_CHANGED) { // 작업 상태 변경 (ex: TO_DO -> IN_PROGRESS)
+        if (activityType == ActivityType.USER_LOGGED_IN || activityType == ActivityType.USER_LOGGED_OUT) {
+            result = joinPoint.proceed();
+            targetId = userId;
+            message = activityType.getType();
+
+        } else if (activityType == ActivityType.TASK_STATUS_CHANGED) { // 작업 상태 변경 (ex: TO_DO -> IN_PROGRESS)
             Long taskId = null;
             UpdateStatusRequestDto req = null;
 
