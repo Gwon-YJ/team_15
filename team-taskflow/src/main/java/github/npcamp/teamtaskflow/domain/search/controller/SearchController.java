@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.search.controller;
 
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
 import github.npcamp.teamtaskflow.domain.search.service.SearchService;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
@@ -10,10 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/search")
@@ -32,4 +30,14 @@ public class SearchController {
         Page<TaskResponseDto> tasks = searchService.searchTasks(keyword, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tasks));
     }
+
+    @GetMapping("/comments")
+    public ResponseEntity<ApiResponse<Page<CommentResponseListDto>>> searchComments(
+            @PathVariable Long taskId,
+            @RequestParam String keyword,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<CommentResponseListDto> responseDto = searchService.searchComments(taskId, keyword, pageable);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+    }
+
 }
