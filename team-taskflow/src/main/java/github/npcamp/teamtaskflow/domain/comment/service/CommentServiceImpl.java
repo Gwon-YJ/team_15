@@ -72,7 +72,7 @@ public class CommentServiceImpl implements CommentService{
         }
 
         // 본인 확인
-        if (!comment.getUser().getUsername().equals(username)) {
+        if (!comment.getUser().getUserName().equals(username)) {
             throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS); // 새로 정의 필요
         }
 
@@ -97,7 +97,7 @@ public class CommentServiceImpl implements CommentService{
         }
 
         // 본인 확인
-        if (!comment.getUser().getUsername().equals(username)) {
+        if (!comment.getUser().getUserName().equals(username)) {
             throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
         }
 

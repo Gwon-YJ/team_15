@@ -18,7 +18,7 @@ public record CommentResponseListDto(
     public static CommentResponseListDto toDto(Comment comment) {
         return CommentResponseListDto.builder()
                 .id(comment.getId())
-                .username(comment.getUser().getUsername())
+                .username(comment.getUser().getUserName())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
