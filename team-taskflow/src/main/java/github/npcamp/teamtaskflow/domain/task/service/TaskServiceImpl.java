@@ -138,6 +138,8 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.delete(task);
     }
 
+    @Override
+    @Transactional
     public Task findTaskByIdOrElseThrow(Long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskException(ErrorCode.TASK_NOT_FOUND));
