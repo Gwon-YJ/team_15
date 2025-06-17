@@ -1,5 +1,7 @@
 package github.npcamp.teamtaskflow.domain.task.controller;
 
+import github.npcamp.teamtaskflow.domain.common.aop.Logging;
+import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import github.npcamp.teamtaskflow.domain.user.exception.UserException;
 import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
