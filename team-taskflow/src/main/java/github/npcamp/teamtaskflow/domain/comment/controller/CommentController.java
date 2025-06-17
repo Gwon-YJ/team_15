@@ -58,16 +58,6 @@ public class CommentController {
             @PathVariable Long commentId
     ) {
         CommentDeleteResponseDto responseDto = commentService.deleteComment(taskId, commentId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<ApiResponse<Page<CommentResponseListDto>>> searchComments(
-            @PathVariable Long taskId,
-            @RequestParam String keyword,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        Page<CommentResponseListDto> responseDto = commentService.searchComments(taskId, keyword, pageable);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("댓글이 성공적으로 삭제되었습니다."));
     }
 }
