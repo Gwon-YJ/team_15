@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
     CommentResponseDto createComment(Long taskId, CreateCommentRequestDto requestDto);
-    Comment findByIdOrElseThrow(Long commentId);
+    Comment findCommentByIdOrElseThrow(Long commentId);
     Page<CommentResponseListDto> getComments(Long taskId, Pageable pageable);
     CommentResponseDto updateContent(Long taskId, Long commentId, UpdateCommentRequestDto requestDto);
     CommentDeleteResponseDto deleteComment(Long taskId, Long commentId);
