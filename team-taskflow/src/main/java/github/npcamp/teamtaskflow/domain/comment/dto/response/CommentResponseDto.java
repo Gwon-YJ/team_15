@@ -10,7 +10,7 @@ public record CommentResponseDto(
         Long id,
         Long taskId,
         Long userId,
-        String userName,
+        String username,
         String content,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
@@ -21,7 +21,7 @@ public record CommentResponseDto(
                 .id(comment.getId())
                 .taskId(comment.getTask().getId())
                 .userId(comment.getUser().getId())
-                .userName(comment.getUser().getUsername())
+                .username(comment.getUser().getUsername())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
