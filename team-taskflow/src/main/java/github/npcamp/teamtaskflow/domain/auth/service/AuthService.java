@@ -53,7 +53,7 @@ public class AuthService {
     public AuthResponseDto login(LoginRequestDto req) {
 
         // 사용자 조회
-        User user = userRepository.findByUsername(req.getUsername())
+        User user = userRepository.findByUsername(req.getUserName())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 검증
