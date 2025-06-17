@@ -2,6 +2,7 @@ package github.npcamp.teamtaskflow.domain.comment.controller;
 
 import github.npcamp.teamtaskflow.domain.comment.dto.request.CreateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.UpdateCommentRequestDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDeleteResponseDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
 import github.npcamp.teamtaskflow.domain.comment.service.CommentService;
@@ -24,12 +25,12 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> createComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
             @PathVariable Long taskId,
             @Valid @RequestBody CreateCommentRequestDto requestDto
     ) {
         CommentResponseDto responseDto = commentService.createComment(taskId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
     }
 
     @GetMapping
@@ -37,8 +38,8 @@ public class CommentController {
             @PathVariable Long taskId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<CommentResponseListDto> comments = commentService.getComments(taskId, pageable);
-        return ResponseEntity.ok(ApiResponse.success(comments));
+        Page<CommentResponseListDto> responseDto = commentService.getComments(taskId, pageable);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
     }
 
     @PatchMapping("/{commentId}")
@@ -47,8 +48,26 @@ public class CommentController {
             @PathVariable Long commentId,
             @Valid @RequestBody UpdateCommentRequestDto requestDto
     ) {
-        CommentResponseDto updated = commentService.updateContent(taskId, commentId, requestDto);
-        return ResponseEntity.ok(ApiResponse.success(updated));
+        CommentResponseDto responseDto = commentService.updateContent(taskId, commentId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
     }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponse<CommentDeleteResponseDto>> deleteComment(
+            @PathVariable Long taskId,
+            @PathVariable Long commentId
+    ) {
+        CommentDeleteResponseDto responseDto = commentService.deleteComment(taskId, commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<CommentResponseListDto>>> searchComments(
+            @PathVariable Long taskId,
+            @RequestParam String keyword,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<CommentResponseListDto> responseDto = commentService.searchComments(taskId, keyword, pageable);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+    }
 }
