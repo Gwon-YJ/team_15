@@ -19,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
         // 1. 허용할 도메인 설정
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",// React 개발 서버
+                "http://localhost:3100",
                 "http://localhost:3001",// 추가 개발 서버
                 "https://myapp.com"// 운영 서버
         ));

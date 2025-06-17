@@ -37,8 +37,12 @@ public class Task extends BaseEntity {
     private TaskPriority priority;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "assignee_id")
     private User assignee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private User creator;
 
     private LocalDateTime dueDate;
 
