@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.dashboard.controller;
 
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskCompletionResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.service.DashboardService;
@@ -33,5 +34,13 @@ public class DashboardController {
     public ResponseEntity<ApiResponse<List<TaskStatusResponseDto>>> getStatusTasks(){
         List<TaskStatusResponseDto> dto = dashboardService.getStatusTasks();
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(dto));
+    }
+
+    //전체 태스크 대비 완료율 조회
+    @GetMapping("/completion")
+    public ResponseEntity<ApiResponse<TaskCompletionResponseDto>> getCompletion(){
+        TaskCompletionResponseDto dto = dashboardService.getCompletion();
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(dto));
+
     }
 }
