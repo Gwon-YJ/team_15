@@ -1,6 +1,7 @@
 package github.npcamp.teamtaskflow.domain.task.repository;
 
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
+import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t.status, COUNT(t) FROM Task t GROUP BY t.status")
     List<Object[]> countGroupByStatus();
 
+    //해당되는 상태에 맞게 count
+    long countByStatusAndIsDeletedFalse(TaskStatus status);
 }

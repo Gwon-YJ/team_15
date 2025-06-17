@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.dashboard.service;
 
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskCompletionResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
 
@@ -11,4 +12,7 @@ public interface DashboardService {
     
     //상태별 태스크 수 조회
     List<TaskStatusResponseDto> getStatusTasks();
+
+    TaskCompletionResponseDto getCompletion();
+
 }

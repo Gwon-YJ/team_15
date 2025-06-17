@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.dashboard.service;
 
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskCompletionResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -121,6 +123,35 @@ class DashboardServiceImplTest {
         //then
         //꺼낸 DONE상태의 값이 2과 같은지 비교.
         assertThat(todoDto.getCount()).isEqualTo(2L);
+    }
+
+    @Test
+    void 전체_태스크_대비_완료율_조회시_전체_태스크가_0인_경우_테스트() {
+        // given
+        //전체 태스크 수가 0인 경우
+        Mockito.when(taskRepository.countByIsDeletedFalse()).thenReturn(0L);
+
+        // when
+        TaskCompletionResponseDto dto = dashboardService.getCompletion();
+
+        // then
+        assertThat(0.0).isEqualTo(dto.getCompletionRate());
+
+         }
+
+    @Test
+    void 전체_태스크_대비_완료율_조회_테스트() {
+        // given
+        //전체 태스크 수가 6, done 태스크 수가 3인 경우
+        Mockito.when(taskRepository.countByIsDeletedFalse()).thenReturn(6L);
+        Mockito.when(taskRepository.countByStatusAndIsDeletedFalse(TaskStatus.DONE)).thenReturn(3L);
+
+        // when
+        TaskCompletionResponseDto dto = dashboardService.getCompletion();
+
+        // then
+        assertThat(dto.getCompletionRate()).isEqualTo(50.0);
+
     }
 
 }
