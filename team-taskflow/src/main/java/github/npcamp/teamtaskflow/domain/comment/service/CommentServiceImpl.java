@@ -11,7 +11,6 @@ import github.npcamp.teamtaskflow.domain.common.entity.Comment;
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
 import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.service.TaskService;
-import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
 import github.npcamp.teamtaskflow.domain.user.service.UserService;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
 import org.springframework.data.domain.Page;
