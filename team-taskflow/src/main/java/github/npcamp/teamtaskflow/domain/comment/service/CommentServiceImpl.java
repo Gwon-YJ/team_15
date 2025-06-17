@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
+
     private final TaskService taskService;
     private final UserService userService;
 
@@ -62,18 +63,17 @@ public class CommentServiceImpl implements CommentService{
     @Override
     @Transactional
     public CommentResponseDto updateContent(Long taskId, Long commentId, String username, UpdateCommentRequestDto requestDto) {
-        Task task = taskService.findTaskByIdOrElseThrow(taskId);
 
+        Task task = taskService.findTaskByIdOrElseThrow(taskId);
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
-        // task 연관 검사 (선택)
         if (!comment.getTask().getId().equals(task.getId())) {
             throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
         }
 
         // 본인 확인
         if (!comment.getUser().getUsername().equals(username)) {
-            throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS); // 새로 정의 필요
+            throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
         }
 
         comment.updateComment(requestDto.content());
@@ -91,7 +91,6 @@ public class CommentServiceImpl implements CommentService{
         // Comment 존재 확인
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
-        // Comment가 해당 Task에 속해 있는지 검증
         if (!comment.getTask().getId().equals(task.getId())) {
             throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
         }
@@ -101,15 +100,9 @@ public class CommentServiceImpl implements CommentService{
             throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
         }
 
-        // soft delete 실행
         commentRepository.delete(comment);
 
-        // 삭제 결과 반환 (삭제 시각은 직접 입력)
-        return new CommentDeleteResponseDto(
-                comment.getId(),
-                comment.getTask().getId(),
-                comment.isDeleted()
-        );
+        return CommentDeleteResponseDto.toDto(comment);
     }
 
     //commentId 찾는 메서드
