@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.task.service;
 
+import github.npcamp.teamtaskflow.domain.common.entity.Task;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import github.npcamp.teamtaskflow.domain.task.dto.request.CreateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateTaskRequestDto;
@@ -22,4 +23,7 @@ public interface TaskService {
     TaskDetailResponseDto updateStatus(Long taskId, TaskStatus newStatus);
 
     void deleteTask(Long taskId);
+
+    Task findTaskByIdOrElseThrow(Long taskId);
+
 }
