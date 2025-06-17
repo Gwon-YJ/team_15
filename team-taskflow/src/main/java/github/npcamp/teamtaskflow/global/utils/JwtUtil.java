@@ -1,6 +1,6 @@
 package github.npcamp.teamtaskflow.global.utils;
 
-import github.npcamp.teamtaskflow.domain.user.enums.UserRoleEnum;
+import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j(topic = "JwtUtil")
 @Component

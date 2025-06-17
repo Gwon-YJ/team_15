@@ -1,18 +1,20 @@
 package github.npcamp.teamtaskflow.domain.common.entity;
 
-import github.npcamp.teamtaskflow.domain.user.enums.UserRoleEnum;
+import github.npcamp.teamtaskflow.domain.common.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,11 +37,18 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public User(String name, String userName, String password, UserRoleEnum role) {
+    private LocalDateTime createdAt;
+
+    public User(String name, String userName, String password, String email, UserRoleEnum role) {
         this.name = name;
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 }

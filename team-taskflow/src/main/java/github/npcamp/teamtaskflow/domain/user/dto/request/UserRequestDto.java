@@ -16,11 +16,4 @@ public class UserRequestDto {
 
     @NotBlank(message = "password는 필수입니다.")
     private final String password;
-
-    @NotBlank(message = "savepassword는 필수입니다.")
-    private String savePassword;
-
-    @NotBlank(message = "changepassword는 필수입니다.")
-    private String changePassword;
-
 }

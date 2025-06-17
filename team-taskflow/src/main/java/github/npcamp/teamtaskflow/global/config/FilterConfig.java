@@ -1,7 +1,7 @@
 package github.npcamp.teamtaskflow.global.config;
 
 
-import github.npcamp.teamtaskflow.domain.auth.service.LogOutService;
+import github.npcamp.teamtaskflow.domain.auth.service.AuthService;
 import github.npcamp.teamtaskflow.global.filter.JwtFilter;
 import github.npcamp.teamtaskflow.global.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class FilterConfig {
 
     private final JwtUtil jwtUtil;
-    private final LogOutService logOutService;
+    private final AuthService logOutService;
 
 
     @Bean

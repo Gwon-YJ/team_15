@@ -30,7 +30,7 @@ public class CreateTaskResponseDto {
                 .content(task.getContent())
                 .priority(task.getPriority())
                 .status(task.getStatus())
-                .assignee(task.getAssignee().getUsername())
+                .assignee(String.valueOf(task.getAssignee()))
                 .dueDate(task.getDueDate())
                 .createdAt(task.getCreatedAt())
                 .build();

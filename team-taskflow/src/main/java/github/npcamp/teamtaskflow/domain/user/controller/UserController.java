@@ -1,56 +1,72 @@
 package github.npcamp.teamtaskflow.domain.user.controller;
 
-
+import github.npcamp.teamtaskflow.domain.user.dto.request.PasswordChangeRequestDto;
 import github.npcamp.teamtaskflow.domain.user.dto.request.UserRequestDto;
 import github.npcamp.teamtaskflow.domain.user.dto.response.UserResponseDto;
 import github.npcamp.teamtaskflow.domain.user.service.UserService;
+import github.npcamp.teamtaskflow.global.payload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-@RequiredArgsConstructor
-@RequestMapping("/users")
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("api/users")
 public class UserController {
+
     private final UserService userService;
 
-
-    // 회원 전체조회
-    @GetMapping()
-    public ResponseEntity<List<UserResponseDto>> findUserList(@Valid @RequestBody UserRequestDto userRequestDto){
-        List<UserResponseDto> resultDtoList = userService.findUserList(userRequestDto);
-        return new ResponseEntity<>(resultDtoList, HttpStatus.OK);
+    // 계정 전체조회 (userName으로 검색)
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserResponseDto>>> findUserList(
+            @RequestParam(required = false) String userName) {
+        List<UserResponseDto> users = userService.findUserList(userName);
+        return ResponseEntity.ok(ApiResponse.success("사용자 리스트 조회 완료", users));
     }
 
-    // 회원 부분조회
+    // 계정 단일조회
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> findUser(@PathVariable Long userId){
-        UserResponseDto resultDto = userService.findUser(userId);
-        return new ResponseEntity<>(resultDto, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<UserResponseDto>> findUser(@PathVariable Long userId) {
+       UserResponseDto user = userService.findUser(userId);
+        return ResponseEntity.ok(ApiResponse.success("사용자 정보를 조회했습니다.", user));
     }
 
-    // 회원 수정
+    // 계정 정보 수정
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId,@RequestHeader("Authorization") String authorizationHeader, @Valid @RequestBody UserRequestDto userRequestDto){
-        UserResponseDto resultDto = userService.updateUser(userId, authorizationHeader, userRequestDto);
-        return new ResponseEntity<>(resultDto, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authorizationHeader,
+            @Valid @RequestBody UserRequestDto userRequestDto
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success("회원 정보가 수정되었습니다.", userService.updateUser(userId, authorizationHeader, userRequestDto))
+        );
     }
 
-    // 회원 비밀번호수정
-    @PutMapping("/{userId}")
-    public ResponseEntity<String> updateUserPw(@PathVariable Long userId,@RequestHeader("Authorization") String authorizationHeader, @Valid @RequestBody UserRequestDto userRequestDto){
-        userService.updateUserPw(userId, authorizationHeader, userRequestDto);
-        return new ResponseEntity<>("수정 성공", HttpStatus.OK);
+    // 계정 비밀번호 수정
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<ApiResponse<Void>> updateUserPw(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authorizationHeader,
+            @Valid @RequestBody PasswordChangeRequestDto dto
+    ) {
+        userService.updateUserPw(userId, authorizationHeader, dto);
+        return ResponseEntity.ok(ApiResponse.success("비밀번호가 성공적으로 변경되었습니다."));
     }
 
-    // 회원 삭제
-    @DeleteMapping("{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId,@RequestHeader("Authorization") String authorizationHeader, @RequestBody UserRequestDto userRequestDto){
+    // 계정 삭제
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponse<Void>> deleteUser(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody UserRequestDto userRequestDto
+    ) {
         userService.deleteUser(userId, authorizationHeader, userRequestDto);
-        return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
+        return ResponseEntity.ok(ApiResponse.success("회원이 성공적으로 삭제되었습니다."));
     }
-
 }
+

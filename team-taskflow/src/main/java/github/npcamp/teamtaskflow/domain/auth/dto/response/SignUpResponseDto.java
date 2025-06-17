@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class SignUpResponseDto {
-    private String userName;
-    private String message;
+    private String username;
+    private String email;
+    private String password;
 }
