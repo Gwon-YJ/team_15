@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class TaskNotFoundException extends CustomException {
-    public TaskNotFoundException(ErrorCode errorCode) {
+public class TaskException extends CustomException {
+    public TaskException(ErrorCode errorCode) {
         super(errorCode);
     }
 }

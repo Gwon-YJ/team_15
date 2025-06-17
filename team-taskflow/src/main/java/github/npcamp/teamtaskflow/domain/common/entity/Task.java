@@ -29,6 +29,7 @@ public class Task extends BaseEntity {
     @Column(columnDefinition = "longText", nullable = false)
     private String content;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.TODO;
 
@@ -41,8 +42,21 @@ public class Task extends BaseEntity {
 
     private LocalDateTime dueDate;
 
+    @Builder.Default
     private Boolean isDeleted = false;
 
     private LocalDateTime deletedAt;
+
+    public void updateTask(String title, String content, TaskPriority priority, User user, LocalDateTime dueDate) {
+        this.title = title;
+        this.content = content;
+        this.priority = priority;
+        this.assignee = user;
+        this.dueDate = dueDate;
+    }
+
+    public void updateStatus(TaskStatus newStatus) {
+        this.status = newStatus;
+    }
 
 }

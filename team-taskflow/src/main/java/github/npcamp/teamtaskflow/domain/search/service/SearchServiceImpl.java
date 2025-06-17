@@ -1,6 +1,6 @@
 package github.npcamp.teamtaskflow.domain.search.service;
 
-import github.npcamp.teamtaskflow.domain.task.dto.TaskResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

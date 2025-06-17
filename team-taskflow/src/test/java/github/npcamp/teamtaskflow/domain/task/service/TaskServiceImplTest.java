@@ -3,10 +3,11 @@ package github.npcamp.teamtaskflow.domain.task.service;
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
 import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.TaskPriority;
-import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskRequestDto;
-import github.npcamp.teamtaskflow.domain.task.dto.CreateTaskResponseDto;
-import github.npcamp.teamtaskflow.domain.task.dto.TaskDetailResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.request.CreateTaskRequestDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.CreateTaskResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
+import github.npcamp.teamtaskflow.domain.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +33,9 @@ public class TaskServiceImplTest {
     @Mock
     TaskRepository taskRepository;
 
+    @Mock
+    UserRepository userRepository;
+
     @Test
     void 태스크_저장_서비스_단위_테스트() {
 
@@ -40,6 +44,9 @@ public class TaskServiceImplTest {
 
         User user = mock();
         ReflectionTestUtils.setField(user, "id", dto.getAssigneeId());
+        ReflectionTestUtils.setField(user, "username", "테스트");
+
+        given(userRepository.findById(dto.getAssigneeId())).willReturn(Optional.of(user));
 
         Task savedTask = Task.builder()
                 .title(dto.getTitle())
@@ -70,7 +77,7 @@ public class TaskServiceImplTest {
         long taskId = 1L;
 
         User user = mock();
-        ReflectionTestUtils.setField(user, "username", "테스트 이름");
+        given(user.getUsername()).willReturn("test");
 
         Task task = Task.builder()
                 .assignee(user)

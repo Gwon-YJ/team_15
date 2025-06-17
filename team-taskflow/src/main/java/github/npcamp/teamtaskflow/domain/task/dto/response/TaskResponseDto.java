@@ -1,4 +1,4 @@
-package github.npcamp.teamtaskflow.domain.task.dto;
+package github.npcamp.teamtaskflow.domain.task.dto.response;
 
 
 import github.npcamp.teamtaskflow.domain.common.entity.Task;

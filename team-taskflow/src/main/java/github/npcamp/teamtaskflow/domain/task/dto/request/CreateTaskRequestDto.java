@@ -1,4 +1,4 @@
-package github.npcamp.teamtaskflow.domain.task.dto;
+package github.npcamp.teamtaskflow.domain.task.dto.request;
 
 import github.npcamp.teamtaskflow.domain.task.TaskPriority;
 import jakarta.validation.constraints.Future;

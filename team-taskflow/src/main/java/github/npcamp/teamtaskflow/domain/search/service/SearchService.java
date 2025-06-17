@@ -1,6 +1,6 @@
 package github.npcamp.teamtaskflow.domain.search.service;
 
-import github.npcamp.teamtaskflow.domain.task.dto.TaskResponseDto;
+import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
