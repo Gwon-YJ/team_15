@@ -7,7 +7,7 @@ import github.npcamp.teamtaskflow.domain.task.dto.request.CreateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.CreateTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
-import github.npcamp.teamtaskflow.domain.user.UserRepository;
+import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -67,7 +67,7 @@ public class TaskServiceImplTest {
         assertEquals(dto.getTitle(), responseDto.getTitle());
         assertEquals(dto.getContent(), responseDto.getContent());
         assertEquals(dto.getPriority(), responseDto.getPriority());
-        assertEquals(user.getUsername(), responseDto.getAssignee());
+        assertEquals(user.getUserName(), responseDto.getAssignee());
         assertEquals(dto.getDueDate(), responseDto.getDueDate());
     }
 
@@ -77,7 +77,7 @@ public class TaskServiceImplTest {
         long taskId = 1L;
 
         User user = mock();
-        given(user.getUsername()).willReturn("test");
+        given(user.getUserName()).willReturn("test");
 
         Task task = Task.builder()
                 .assignee(user)
