@@ -31,7 +31,7 @@ public class TaskDetailResponseDto {
                 .content(task.getContent())
                 .priority(task.getPriority())
                 .status(task.getStatus())
-                .assignee(task.getAssignee().getUserName())
+                .assignee(task.getAssignee().getUsername())
                 .dueDate(task.getDueDate())
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())

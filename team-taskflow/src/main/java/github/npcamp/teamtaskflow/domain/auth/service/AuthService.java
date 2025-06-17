@@ -32,16 +32,15 @@ public class AuthService {
         }
 
         // 유니크 유저네임 중복 확인
-        if (userRepository.existsByUsername(req.getUserName())) {
+        if (userRepository.existsByUsername(req.getUsername())) {
             throw new AuthException(ErrorCode.DUPLICATE_USERNAME); // 예외 발생
         }
 
         User user = User.builder()
-                .userName(req.getUserName())
+                .username(req.getUsername())
                 .email(req.getEmail())
                 .password(encoder.encode(req.getPassword()))
                 .name(req.getName())
-                .role(req.getRole())
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -53,7 +52,7 @@ public class AuthService {
     public AuthResponseDto login(LoginRequestDto req) {
 
         // 사용자 조회
-        User user = userRepository.findByUsername(req.getUserName())
+        User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 검증
@@ -66,7 +65,7 @@ public class AuthService {
     }
 
     private AuthResponseDto generateAuthResponse(User user) {
-        String token = jwtUtil.generateToken(user.getId(), user.getUserName(), user.getRole());
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         return new AuthResponseDto(token, UserResponseDto.toDto(user));
     }
 }

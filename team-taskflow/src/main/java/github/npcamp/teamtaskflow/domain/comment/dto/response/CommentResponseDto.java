@@ -21,7 +21,7 @@ public record CommentResponseDto(
                 .id(comment.getId())
                 .taskId(comment.getTask().getId())
                 .userId(comment.getUser().getId())
-                .username(comment.getUser().getUserName())
+                .username(comment.getUser().getUsername())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
