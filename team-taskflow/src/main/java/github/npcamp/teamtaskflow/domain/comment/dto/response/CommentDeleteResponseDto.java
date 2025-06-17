@@ -5,6 +5,5 @@ import java.time.LocalDateTime;
 public record CommentDeleteResponseDto(
         Long id,
         Long taskId,
-        boolean isDeleted,
-        LocalDateTime deleteAt) {
+        boolean isDeleted) {
 }
