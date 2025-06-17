@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+//soft Delete
 @SQLDelete(sql = "UPDATE comment SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "is_deleted = false")
 public class Comment extends BaseEntity{
@@ -25,7 +26,6 @@ public class Comment extends BaseEntity{
     @JoinColumn(name = "task_id", nullable = false)
     private Task task; // 할일과 다대일 관계로 join
 
-    //Todo: user domain 생성이후 만들기.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // user와도 다대일 관계로 join
