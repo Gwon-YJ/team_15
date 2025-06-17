@@ -15,6 +15,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -42,7 +43,8 @@ public class LoggingAspect {
         }
 
         // Todo
-        Long userId = 999L; // 시큐리티 적용 되면 바꿀 에정
+        Long userId = getCurrentUserId(); // 시큐리티 적용 되면 바꿀 에정
+
         String ip = request.getRemoteAddr();
         String method = request.getMethod();
         String url = request.getRequestURI();
@@ -56,8 +58,7 @@ public class LoggingAspect {
         String message = null; // 로그에 기록할 메세지
         Long targetId; // 대상 엔티티 ID
 
-        // 작업 상태 변경 (ex: TO_DO → IN_PROGRESS)
-        if (activityType == ActivityType.TASK_STATUS_CHANGED) {
+         if (activityType == ActivityType.TASK_STATUS_CHANGED) { // 작업 상태 변경 (ex: TO_DO -> IN_PROGRESS)
             Long taskId = null;
             UpdateStatusRequestDto req = null;
 
@@ -72,7 +73,6 @@ public class LoggingAspect {
 
             // 필수 인자가 없으면 로깅 없이 그대로 진행
             if (taskId == null || req == null) {
-                log.warn("TASK_STATUS_CHANGED 로그 실패: 필수 파라미터 누락");
                 return joinPoint.proceed();
             }
 
@@ -96,11 +96,25 @@ public class LoggingAspect {
             message = activityType.getType(); // enum의 설명 텍스트 등
         }
 
+
         // 공통 로깅 처리
         activityLogService.saveActivityLog(userId, ip, method, url, activityType, targetId, message);
         log.info("ActivityLog: {}", message);
 
         return result;
+
+    }
+
+    private Long getCurrentUserId() {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            return null;
+        }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof Long id) {
+            return id;
+        }
+        return null;
     }
 
     /**
@@ -146,8 +160,4 @@ public class LoggingAspect {
 
 }
 
-//        if (activityType == ActivityType.USER_LOGGED_IN || activityType == ActivityType.USER_LOGGED_OUT) {
-//            targetId = userId; // 본인을 대상으로
-//        } else {
-//            targetId = extractTargetIdFromResult(result); // 기존 방식
-//        }
+
