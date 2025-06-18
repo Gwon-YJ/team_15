@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -21,4 +22,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     //해당되는 상태에 맞게 count
     long countByStatusAndIsDeletedFalse(TaskStatus status);
+
+
+    List<Task> findByAssignee_IdAndDueDateAndStatusInOrderByPriorityDesc(Long userId, LocalDateTime dueDate, List<TaskStatus>statusList);
+
+
 }
