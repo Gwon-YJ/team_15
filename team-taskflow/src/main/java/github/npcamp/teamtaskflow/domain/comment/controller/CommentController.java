@@ -15,7 +15,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
@@ -31,10 +30,9 @@ public class CommentController {
     public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
             @PathVariable Long taskId,
             @Valid @RequestBody CreateCommentRequestDto requestDto,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Long currentUserId
     ) {
-        String username = userDetails.getUsername();
-        CommentResponseDto responseDto = commentService.createComment(taskId, username, requestDto);
+        CommentResponseDto responseDto = commentService.createComment(taskId, currentUserId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
     }
 
@@ -54,10 +52,9 @@ public class CommentController {
             @PathVariable Long taskId,
             @PathVariable Long commentId,
             @Valid @RequestBody UpdateCommentRequestDto requestDto,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Long currentUserId
     ) {
-        String username = userDetails.getUsername();
-        CommentResponseDto responseDto = commentService.updateContent(taskId, commentId, username, requestDto);
+        CommentResponseDto responseDto = commentService.updateContent(taskId, commentId, currentUserId, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
     }
 
@@ -66,10 +63,9 @@ public class CommentController {
     public ResponseEntity<ApiResponse<CommentDeleteResponseDto>> deleteComment(
             @PathVariable Long taskId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Long currentUserId
     ) {
-        String username = userDetails.getUsername();
-        CommentDeleteResponseDto responseDto = commentService.deleteComment(taskId, commentId, username);
+        CommentDeleteResponseDto responseDto = commentService.deleteComment(taskId, commentId,currentUserId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("댓글이 성공적으로 삭제되었습니다."));
     }
 }

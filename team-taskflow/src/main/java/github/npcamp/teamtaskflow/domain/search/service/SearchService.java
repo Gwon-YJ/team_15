@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface SearchService {
     Page<TaskResponseDto> searchTasks(String keyword, Pageable pageable);
-    Page<CommentResponseListDto> searchComments(Long taskId, String keyword, Pageable pageable);
+    Page<CommentResponseListDto> searchComments(String keyword, Pageable pageable);
 }
