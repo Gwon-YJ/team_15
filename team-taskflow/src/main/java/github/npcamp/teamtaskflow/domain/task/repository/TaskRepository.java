@@ -2,6 +2,7 @@ package github.npcamp.teamtaskflow.domain.task.repository;
 
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,7 +25,18 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     long countByStatusAndIsDeletedFalse(TaskStatus status);
 
 
-    List<Task> findByAssignee_IdAndDueDateAndStatusInOrderByPriorityDesc(Long userId, LocalDateTime dueDate, List<TaskStatus>statusList);
+    /*우선순위를 1,2,3으로 치환한 후 정렬*/
+    @Query("SELECT t FROM Task t " +
+            "WHERE t.assignee.id = :userId " +
+            "AND t.status IN :statusList " +
+            "AND t.dueDate >=:dueDate " +
+            "ORDER BY " +
+            "CASE t.priority " +
+            "WHEN 'HIGH' THEN 1 " +
+            "WHEN 'MEDIUM' THEN 2 " +
+            "WHEN 'LOW' THEN 3 " +
+            "END ASC")
+    List<Task>  findSortedTasksByPriority(Long userId,List<TaskStatus>statusList, LocalDateTime dueDate);
 
 
 }
