@@ -2,12 +2,14 @@ package github.npcamp.teamtaskflow.domain.comment.controller;
 
 import github.npcamp.teamtaskflow.domain.comment.dto.request.CreateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.UpdateCommentRequestDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDeleteResponseDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
 import github.npcamp.teamtaskflow.domain.comment.service.CommentService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ public class CommentController {
 
     //댓글생성
     @PostMapping
+    @Logging(ActivityType.COMMENT_CREATED)
     public ResponseEntity<ApiResponse<CommentDetailDto>> createComment(
             @PathVariable Long taskId,
             @Valid @RequestBody CreateCommentRequestDto requestDto,
@@ -46,6 +49,7 @@ public class CommentController {
 
     //댓글 수정 - content만 수정하므로, patch사용함.
     @PatchMapping("/{commentId}")
+    @Logging(ActivityType.COMMENT_UPDATED)
     public ResponseEntity<ApiResponse<CommentDetailDto>> updateComment(
             @PathVariable Long taskId,
             @PathVariable Long commentId,
@@ -58,6 +62,7 @@ public class CommentController {
 
     //댓글삭제 (soft delete)
     @DeleteMapping("/{commentId}")
+    @Logging(ActivityType.COMMENT_DELETED)
     public ResponseEntity<ApiResponse<Void>> deleteComment(
             @PathVariable Long taskId,
             @PathVariable Long commentId,
