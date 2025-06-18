@@ -31,11 +31,16 @@ public class SearchServiceImpl implements SearchService {
                 .map(TaskResponseDto::toDto);
     }
 
+    /**
+     *
+     * SELECT * FROM comment
+     * WHERE LOWER(content) LIKE LOWER('%keyword%')
+     */
     @Override
     @Transactional(readOnly = true)
-    public Page<CommentResponseListDto> searchComments(Long taskId, String keyword, Pageable pageable) {
+    public Page<CommentResponseListDto> searchComments(String keyword, Pageable pageable) {
         Page<Comment> comments = commentRepository
-                .findByTaskIdAndContentContainingIgnoreCase(taskId, keyword, pageable);
+                .findByContentContainingIgnoreCase(keyword, pageable);
         return comments.map(CommentResponseListDto::toDto);
     }
 }
