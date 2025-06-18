@@ -43,7 +43,7 @@ public class TaskServiceImpl implements TaskService {
         // Task 생성 (기본 Status는 "할 일")
         Task task = Task.builder()
                 .title(req.getTitle())
-                .content(req.getContent())
+                .description(req.getDescription())
                 .priority(req.getPriority())
                 .assignee(assignee)
                 .dueDate(req.getDueDate())
@@ -95,9 +95,9 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND)); // 추후 수정 예정
 
         // Task 수정 (PUT)
-        task.updateTask(req.getTitle(), req.getContent(), req.getPriority(), assignee, req.getDueDate());
+        task.updateTask(req.getTitle(), req.getDescription(), req.getPriority(), assignee, req.getDueDate());
 
-        return TaskDetailResponseDto.toDto(taskRepository.save(task));
+        return TaskDetailResponseDto.toDto(taskRepository.saveAndFlush(task));
     }
 
     /**
@@ -124,7 +124,7 @@ public class TaskServiceImpl implements TaskService {
         // Task Status 수정(PATCH)
         task.updateStatus(newStatus);
 
-        return TaskDetailResponseDto.toDto(taskRepository.save(task));
+        return TaskDetailResponseDto.toDto(taskRepository.saveAndFlush(task));
     }
 
     /**

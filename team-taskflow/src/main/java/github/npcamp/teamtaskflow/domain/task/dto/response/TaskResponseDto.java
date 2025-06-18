@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,7 +20,7 @@ public class TaskResponseDto {
     private final String title;
     private final TaskPriority priority;
     private final TaskStatus status;
-    private final LocalDateTime dueDate;
+    private final LocalDate dueDate;
 
     public static TaskResponseDto toDto(Task task) {
         return TaskResponseDto.builder()

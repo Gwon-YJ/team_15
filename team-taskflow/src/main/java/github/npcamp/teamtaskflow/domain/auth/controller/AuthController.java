@@ -25,14 +25,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponseDto>> register(@Valid @RequestBody RegisterRequestDto req) {
         AuthResponseDto res = authService.register(req);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("회원가입이 완료되었습니다.", res));
     }
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody LoginRequestDto req) {
         AuthResponseDto res = authService.login(req);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("로그인이 완료되었습니다", res));
     }
 
 }

@@ -83,7 +83,7 @@ public class LoggingAspect {
             // 현재 상태 조회, 메서드 실행, 바뀐 상태 확인
             TaskStatus fromStatus = activityLogService.findTaskStatus(taskId);
             result = joinPoint.proceed();
-            TaskStatus toStatus = req.getNewStatus();
+            TaskStatus toStatus = req.getStatus();
 
             if (fromStatus == toStatus) {
                 return result; // 동일 상태면 로깅 안함
