@@ -19,33 +19,34 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
+
     private final TaskService taskService;
     private final UserService userService;
 
     //댓글 생성
     @Override
     @Transactional
-    public CommentResponseDto createComment(Long taskId, String username, CreateCommentRequestDto requestDto) {
+    public CommentResponseDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto) {
 
-        Task task = taskService.findTaskByIdOrElseThrow(taskId);
-        User user = userService.findUserByUsernameOrElseThrow(username);
+        Task task = taskService.findTaskByIdOrElseThrow(taskId); // 태스크 존재 여부 확인
+        User user = userService.findUserByIdOrElseThrow(userId); // 사용자 존재 여부 확인
 
-        Comment comment = Comment.builder()
+        Comment comment = Comment.builder() // 댓글 객체 생성
                 .task(task)
                 .user(user)
+                .username(user.getUsername())
                 .content(requestDto.content())
                 .build();
 
-        Comment saved = commentRepository.save(comment);
+        Comment saved = commentRepository.save(comment); // 댓글 저장
 
-        return CommentResponseDto.toDto(saved);
+        return CommentResponseDto.toDto(saved); // 응답 DTO 반환
     }
 
 
@@ -53,66 +54,60 @@ public class CommentServiceImpl implements CommentService{
     @Override
     @Transactional(readOnly = true)
     public Page<CommentResponseListDto> getComments(Long taskId, Pageable pageable) {
-        Page<Comment> comments = commentRepository.findAllByTaskId(taskId, pageable);
 
-        return comments.map(CommentResponseListDto::toDto);
+        Page<Comment> comments = commentRepository.findAllByTaskId(taskId, pageable); // 태스크 ID로 댓글 목록 조회
+
+        return comments.map(CommentResponseListDto::toDto);// 응답 DTO로 변환
     }
 
     //댓글 수정
     @Override
     @Transactional
-    public CommentResponseDto updateContent(Long taskId, Long commentId, String username, UpdateCommentRequestDto requestDto) {
-        Task task = taskService.findTaskByIdOrElseThrow(taskId);
+    public CommentResponseDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto) {
 
+        Task task = taskService.findTaskByIdOrElseThrow(taskId);
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
-        // task 연관 검사 (선택)
+        // 댓글이 해당 task에 속하지 않는 경우 예외처리
         if (!comment.getTask().getId().equals(task.getId())) {
             throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
         }
 
-        // 본인 확인
-        if (!comment.getUser().getUsername().equals(username)) {
-            throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS); // 새로 정의 필요
-        }
-
-        comment.updateComment(requestDto.content());
-
-        return CommentResponseDto.toDto(comment);
-    }
-
-    @Override
-    @Transactional
-    public CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, String username) {
-
-        // Task 존재 확인
-        Task task = taskService.findTaskByIdOrElseThrow(taskId);
-
-        // Comment 존재 확인
-        Comment comment = findCommentByIdOrElseThrow(commentId);
-
-        // Comment가 해당 Task에 속해 있는지 검증
-        if (!comment.getTask().getId().equals(task.getId())) {
-            throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
-        }
-
-        // 본인 확인
-        if (!comment.getUser().getUsername().equals(username)) {
+        User user = userService.findUserByIdOrElseThrow(userId); // 사용자 존재 확인
+        if (!comment.getUser().getId().equals(user.getId())) { // 댓글 본인 확인 - 아니면 에러코드
             throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
         }
 
-        // soft delete 실행
-        commentRepository.delete(comment);
+        comment.updateComment(requestDto.content()); // 댓글 내용 수정
 
-        // 삭제 결과 반환 (삭제 시각은 직접 입력)
-        return new CommentDeleteResponseDto(
-                comment.getId(),
-                comment.getTask().getId(),
-                comment.isDeleted()
-        );
+        commentRepository.flush();
+
+        return CommentResponseDto.toDto(comment); // 수정된 댓글 반환
     }
 
-    //commentId 찾는 메서드
+    //댓글 삭제
+    @Override
+    @Transactional
+    public CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, Long userId) {
+
+        Task task = taskService.findTaskByIdOrElseThrow(taskId);
+        Comment comment = findCommentByIdOrElseThrow(commentId);
+
+        if (!comment.getTask().getId().equals(task.getId())) {
+            throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
+        }
+
+        User user = userService.findUserByIdOrElseThrow(userId);
+        if (!comment.getUser().getId().equals(user.getId())) {
+            throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
+        }
+
+        commentRepository.delete(comment); // 댓글 내용 삭제 (soft)
+
+        return CommentDeleteResponseDto.toDto(comment); //삭제된 댓글 반환
+    }
+
+    // commentId로 댓글을 조회하고 없으면 예외
     @Override
     @Transactional(readOnly = true)
     public Comment findCommentByIdOrElseThrow(Long commentId) {

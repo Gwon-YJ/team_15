@@ -22,7 +22,7 @@ public class SearchController {
 
     /**
      * (제목, 내용) 키워드를 입력하여 task 조회
-     * /search/tasks?keyword=검색어&page=1
+     * 예시: /search/tasks?keyword={검색어}&page=1
      */
     @GetMapping("/tasks")
     public ResponseEntity<ApiResponse<Page<TaskResponseDto>>> searchTasks(@RequestParam String keyword,
@@ -31,13 +31,16 @@ public class SearchController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tasks));
     }
 
+    /**
+     * 댓글 키워드 검색
+     * 예시: /search/comment?keyword={검색어}&page=1
+     */
     @GetMapping("/comments")
     public ResponseEntity<ApiResponse<Page<CommentResponseListDto>>> searchComments(
-            @PathVariable Long taskId,
             @RequestParam String keyword,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<CommentResponseListDto> responseDto = searchService.searchComments(taskId, keyword, pageable);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+        Page<CommentResponseListDto> comments = searchService.searchComments(keyword, pageable);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(comments));
     }
 
 }
