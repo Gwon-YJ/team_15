@@ -70,15 +70,14 @@ public class JwtUtil {
     public String generateToken(Long userId, String username, UserRoleEnum userRole) {
         Date date = new Date();
 
-        return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username) // 사용자 식별자 (ID)
-                        .claim("userId", userId) // 사용자 고유 Id
-                        .claim("auth", userRole) // 사용자 권한 (역할)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간 설정
-                        .setIssuedAt(date) // 발급 시간 설정
-                        .signWith(key, signatureAlgorithm) // 비밀 키와 알고리즘으로 서명
-                        .compact(); // JWT 토큰 생성
+        return Jwts.builder()
+                .setSubject(username) // 사용자 식별자 (ID)
+                .claim("userId", userId) // 사용자 고유 Id
+                .claim("auth", userRole) // 사용자 권한 (역할)
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간 설정
+                .setIssuedAt(date) // 발급 시간 설정
+                .signWith(key, signatureAlgorithm) // 비밀 키와 알고리즘으로 서명
+                .compact(); // JWT 토큰 생성
     }
 
     /**
