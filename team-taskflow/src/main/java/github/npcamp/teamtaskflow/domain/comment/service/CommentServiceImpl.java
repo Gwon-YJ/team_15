@@ -39,7 +39,6 @@ public class CommentServiceImpl implements CommentService{
         Comment comment = Comment.builder() // 댓글 객체 생성
                 .task(task)
                 .user(user)
-                .username(user.getUsername())
                 .content(requestDto.content())
                 .build();
 
