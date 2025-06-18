@@ -1,6 +1,7 @@
 package github.npcamp.teamtaskflow.domain.user.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import github.npcamp.teamtaskflow.domain.common.base.Identifiable;
 import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.user.UserRoleEnum;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponseDto {
+public class UserResponseDto implements Identifiable {
     private Long id;
     private String username;
     private String email;
@@ -34,4 +35,10 @@ public class UserResponseDto {
                 .createdAt(user.getCreatedAt())
                 .build();
     }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
 }
