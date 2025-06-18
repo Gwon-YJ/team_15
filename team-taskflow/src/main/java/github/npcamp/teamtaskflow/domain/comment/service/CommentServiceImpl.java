@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +32,10 @@ public class CommentServiceImpl implements CommentService{
     //댓글 생성
     @Override
     @Transactional
-    public CommentResponseDto createComment(Long taskId, String username, CreateCommentRequestDto requestDto) {
+    public CommentResponseDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto) {
 
         Task task = taskService.findTaskByIdOrElseThrow(taskId);
-        User user = userService.findUserByUsernameOrElseThrow(username);
+        User user = userService.findUserByIdOrElseThrow(userId);
 
         Comment comment = Comment.builder()
                 .task(task)
@@ -62,7 +61,7 @@ public class CommentServiceImpl implements CommentService{
     //댓글 수정
     @Override
     @Transactional
-    public CommentResponseDto updateContent(Long taskId, Long commentId, String username, UpdateCommentRequestDto requestDto) {
+    public CommentResponseDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto) {
 
         Task task = taskService.findTaskByIdOrElseThrow(taskId);
         Comment comment = findCommentByIdOrElseThrow(commentId);
@@ -71,8 +70,8 @@ public class CommentServiceImpl implements CommentService{
             throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
         }
 
-        // 본인 확인
-        if (!comment.getUser().getUsername().equals(username)) {
+        User user = userService.findUserByIdOrElseThrow(userId);
+        if (!comment.getUser().getId().equals(user.getId())) {
             throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
         }
 
@@ -83,7 +82,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     @Transactional
-    public CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, String username) {
+    public CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, Long userId) {
 
         // Task 존재 확인
         Task task = taskService.findTaskByIdOrElseThrow(taskId);
@@ -95,8 +94,8 @@ public class CommentServiceImpl implements CommentService{
             throw new CommentException(ErrorCode.TASK_COMMENT_MISMATCH);
         }
 
-        // 본인 확인
-        if (!comment.getUser().getUsername().equals(username)) {
+        User user = userService.findUserByIdOrElseThrow(userId);
+        if (!comment.getUser().getId().equals(user.getId())) {
             throw new CommentException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
         }
 

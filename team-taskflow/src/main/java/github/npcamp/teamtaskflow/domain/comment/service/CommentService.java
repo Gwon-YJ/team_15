@@ -10,9 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
-    CommentResponseDto createComment(Long taskId, String username, CreateCommentRequestDto requestDto);
+    CommentResponseDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto);
     Comment findCommentByIdOrElseThrow(Long commentId);
     Page<CommentResponseListDto> getComments(Long taskId, Pageable pageable);
-    CommentResponseDto updateContent(Long taskId, Long commentId, String username, UpdateCommentRequestDto requestDto);
-    CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, String username);
+    CommentResponseDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto);
+    CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, Long userId);
 }
