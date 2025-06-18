@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "WHEN 'MEDIUM' THEN 2 " +
             "WHEN 'LOW' THEN 3 " +
             "END ASC")
-    List<Task>  findSortedTasksByPriority(Long userId,List<TaskStatus>statusList, LocalDateTime dueDate);
+    List<Task>  findSortedTasksByPriority(Long userId,List<TaskStatus>statusList, LocalDate dueDate);
 
 
 }
