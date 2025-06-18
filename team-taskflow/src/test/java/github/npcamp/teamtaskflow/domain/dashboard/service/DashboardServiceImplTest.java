@@ -177,7 +177,7 @@ class DashboardServiceImplTest {
         void 오늘_내_태스크_조회_테스트() {
             // given
             Long userId = 1L;
-            LocalDateTime today = LocalDate.now().atStartOfDay();
+            LocalDate today = LocalDate.now();
 
             
             //테스트용 객체 생성
@@ -194,8 +194,7 @@ class DashboardServiceImplTest {
 
             List<TaskStatus> statusList = List.of(TaskStatus.TODO, TaskStatus.IN_PROGRESS);
 
-            Mockito.when(taskRepository.findByAssignee_IdAndDueDateAndStatusInOrderByPriorityDesc(
-                    userId, today, statusList)).thenReturn(taskList);
+            Mockito.when(taskRepository.findSortedTasksByPriority(userId,  statusList, today)).thenReturn(taskList);
 
             // when
             List<TodayMyTaskListResponseDto> result = dashboardService.getTodayMyTask(userId);
