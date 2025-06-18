@@ -1,14 +1,20 @@
 package github.npcamp.teamtaskflow.domain.dashboard.service;
 
+import github.npcamp.teamtaskflow.domain.common.entity.Task;
+import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskCompletionResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TodayMyTaskListResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +71,23 @@ public class DashboardServiceImpl implements DashboardService{
         double round=Math.round(completionRate*100.0)/100.0;
 
         return new TaskCompletionResponseDto(round);
+    }
+
+
+    @Override
+    public List<TodayMyTaskListResponseDto> getTodayMyTask(Long userId) {
+
+        //오늘 날짜
+        LocalDate today = LocalDate.now();
+
+        //조회할 상태 리스트
+        List<TaskStatus> statusList = Arrays.asList(TaskStatus.TODO, TaskStatus.IN_PROGRESS);
+
+        //조건에 맞는 태스크 조회
+        List<Task> tasks = taskRepository.findSortedTasksByPriority(userId,statusList,today.atStartOfDay());
+
+        return tasks.stream()
+                .map(TodayMyTaskListResponseDto::toDto)
+                .collect(Collectors.toList());
     }
 }
