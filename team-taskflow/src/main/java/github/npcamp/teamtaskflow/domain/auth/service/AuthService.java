@@ -2,6 +2,7 @@ package github.npcamp.teamtaskflow.domain.auth.service;
 
 import github.npcamp.teamtaskflow.domain.auth.dto.request.LoginRequestDto;
 import github.npcamp.teamtaskflow.domain.auth.dto.request.RegisterRequestDto;
+import github.npcamp.teamtaskflow.domain.auth.dto.request.WithdrawRequestDto;
 import github.npcamp.teamtaskflow.domain.auth.dto.response.AuthResponseDto;
 import github.npcamp.teamtaskflow.domain.auth.exception.AuthException;
 import github.npcamp.teamtaskflow.domain.auth.utils.JwtUtil;
@@ -55,10 +56,8 @@ public class AuthService {
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
 
-        // 비밀번호 검증
-        if (!encoder.matches(req.getPassword(), user.getPassword())) {
-            throw new AuthException(ErrorCode.PASSWORD_MISMATCH); // 예외 발생
-        }
+        //비밀번호 검증
+        passwordMatch(req.getPassword(), user.getPassword());
 
         // JWT 토큰 생성 후 응답
         return generateAuthResponse(user);
@@ -67,5 +66,29 @@ public class AuthService {
     private AuthResponseDto generateAuthResponse(User user) {
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         return new AuthResponseDto(token, UserResponseDto.toDto(user));
+    }
+
+    @Transactional
+    public void withdraw(WithdrawRequestDto req, Long userId){
+        //비밀번호 검증
+
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
+
+        passwordMatch(req.getPassword(), user.getPassword());
+        userRepository.delete(user);
+    }
+
+
+    /*
+    password 검증 메서드
+    inputPassword = 입력받은 패스워드
+    password = 저장되어있는 패스워드
+     */
+    public void passwordMatch(String inputPassword, String password){
+        if (!encoder.matches(inputPassword, password)) {
+            throw new AuthException(ErrorCode.PASSWORD_MISMATCH); // 예외 발생
+        }
     }
 }
