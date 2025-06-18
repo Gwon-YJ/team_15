@@ -80,6 +80,8 @@ public class CommentServiceImpl implements CommentService{
 
         comment.updateComment(requestDto.content()); // 댓글 내용 수정
 
+        commentRepository.flush();
+
         return CommentResponseDto.toDto(comment); // 수정된 댓글 반환
     }
 
