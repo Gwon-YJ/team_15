@@ -84,7 +84,7 @@ public class DashboardServiceImpl implements DashboardService{
         List<TaskStatus> statusList = Arrays.asList(TaskStatus.TODO, TaskStatus.IN_PROGRESS);
 
         //조건에 맞는 태스크 조회
-        List<Task> tasks = taskRepository.findSortedTasksByPriority(userId,statusList,today.atStartOfDay());
+        List<Task> tasks = taskRepository.findSortedTasksByPriority(userId,statusList,today);
 
         return tasks.stream()
                 .map(TodayMyTaskListResponseDto::toDto)
