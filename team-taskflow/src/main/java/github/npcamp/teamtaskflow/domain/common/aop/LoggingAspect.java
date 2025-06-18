@@ -1,9 +1,9 @@
 package github.npcamp.teamtaskflow.domain.common.aop;
 
+import github.npcamp.teamtaskflow.domain.auth.dto.response.AuthResponseDto;
 import github.npcamp.teamtaskflow.domain.common.base.Identifiable;
 import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.log.service.ActivityLogService;
-import github.npcamp.teamtaskflow.domain.log.service.ActivityLogServiceImpl;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateStatusRequestDto;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
@@ -42,8 +42,6 @@ public class LoggingAspect {
             return joinPoint.proceed();
         }
 
-        Long userId = getCurrentUserId();
-
         String ip = request.getRemoteAddr();
         String method = request.getMethod();
         String url = request.getRequestURI();
@@ -55,11 +53,17 @@ public class LoggingAspect {
         Object result; // 메서드 실행 결과
 
         String message = null; // 로그에 기록할 메세지
-        Long targetId; // 대상 엔티티 ID
+        Long userId = null;
+        Long targetId = null; // 대상 엔티티 ID
 
-        if (activityType == ActivityType.USER_LOGGED_IN || activityType == ActivityType.USER_LOGGED_OUT) {
+        if (activityType == ActivityType.USER_LOGGED_IN) {
             result = joinPoint.proceed();
-            targetId = userId;
+            targetId = extractTargetIdFromResult(joinPoint, result);
+
+            if (targetId != null) {
+                userId = targetId;
+            }
+
             message = activityType.getType();
 
         } else if (activityType == ActivityType.TASK_STATUS_CHANGED) { // 작업 상태 변경 (ex: TO_DO -> IN_PROGRESS)
@@ -92,21 +96,21 @@ public class LoggingAspect {
             // 로그 메시지 생성 및 대상 ID 추출
             message = contentMessage(activityType, fromStatus, toStatus);
             targetId = extractTargetIdFromResult(joinPoint, result);
+            userId = getCurrentUserId();
 
         } else {
             // 일반 로깅 처리 (생성, 삭제, 할당 등)
             result = joinPoint.proceed();
             targetId = extractTargetIdFromResult(joinPoint, result);
             message = activityType.getType(); // enum의 설명 텍스트 등
+            userId = getCurrentUserId();
         }
-
 
         // 공통 로깅 처리
         activityLogService.saveActivityLog(userId, ip, method, url, activityType, targetId, message);
         log.info("ActivityLog: {}", message);
 
         return result;
-
     }
 
     private Long getCurrentUserId() {
@@ -147,6 +151,14 @@ public class LoggingAspect {
             Object body = response.getBody();
             if (body instanceof ApiResponse<?> apiResponse) {
                 Object data = apiResponse.getData();
+
+                if (data instanceof AuthResponseDto authResponse) {
+                    if (authResponse.getUser() != null) {
+                        Long id = authResponse.getUser().getId();
+                        return id;
+                    }
+                }
+
                 if (data instanceof Identifiable identifiable) {
                     return identifiable.getId();
                 }
