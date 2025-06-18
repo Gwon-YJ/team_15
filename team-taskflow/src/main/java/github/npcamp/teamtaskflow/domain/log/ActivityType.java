@@ -15,10 +15,7 @@ public enum ActivityType {
     USER_LOGGED_IN("로그인하였습니다."),
     USER_LOGGED_OUT("로그아웃하였습니다.");
 
-    private final String type;
 
-    public String format(Object... args) {
-        return String.format(this.type, args);
-    }
+    private final String type;
 
 }

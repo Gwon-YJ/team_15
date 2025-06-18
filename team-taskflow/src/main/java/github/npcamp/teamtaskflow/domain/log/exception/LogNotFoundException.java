@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class ActivityLogException extends CustomException {
-    public ActivityLogException(ErrorCode errorCode) {
+public class LogNotFoundException extends CustomException {
+    public LogNotFoundException(ErrorCode errorCode) {
         super(errorCode);
     }
 }

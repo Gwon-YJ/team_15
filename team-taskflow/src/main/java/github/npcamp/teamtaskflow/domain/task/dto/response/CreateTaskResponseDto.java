@@ -1,6 +1,5 @@
 package github.npcamp.teamtaskflow.domain.task.dto.response;
 
-import github.npcamp.teamtaskflow.domain.common.base.Identifiable;
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
 import github.npcamp.teamtaskflow.domain.task.TaskPriority;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-public class CreateTaskResponseDto implements Identifiable {
+public class CreateTaskResponseDto {
 
     private final Long id;
     private final String title;
@@ -35,11 +34,6 @@ public class CreateTaskResponseDto implements Identifiable {
                 .dueDate(task.getDueDate())
                 .createdAt(task.getCreatedAt())
                 .build();
-    }
-
-    @Override
-    public Long getId() {
-        return this.id;
     }
 
 }

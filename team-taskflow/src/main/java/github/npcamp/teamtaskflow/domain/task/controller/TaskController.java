@@ -1,7 +1,5 @@
 package github.npcamp.teamtaskflow.domain.task.controller;
 
-import github.npcamp.teamtaskflow.domain.common.aop.Logging;
-import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import github.npcamp.teamtaskflow.domain.user.exception.UserException;
 import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
@@ -38,7 +36,6 @@ public class TaskController {
     private final UserRepository userRepository;
 
     @PostMapping
-    @Logging(ActivityType.TASK_CREATED)
     public ResponseEntity<ApiResponse<CreateTaskResponseDto>> createTask(@Valid @RequestBody CreateTaskRequestDto req,
                                                                          @AuthenticationPrincipal Long currentUserId) {
 
@@ -62,7 +59,6 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    @Logging(ActivityType.TASK_UPDATED)
     public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateTask(@PathVariable Long taskId,
                                                                          @Valid @RequestBody UpdateTaskRequestDto req) {
         TaskDetailResponseDto res = taskService.updateTask(taskId, req);
@@ -70,7 +66,6 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/status")
-    @Logging(ActivityType.TASK_STATUS_CHANGED)
     public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateStatus(@PathVariable Long taskId,
                                                                            @Valid @RequestBody UpdateStatusRequestDto req) {
         TaskDetailResponseDto res = taskService.updateStatus(taskId, req.getNewStatus());
@@ -78,7 +73,6 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    @Logging(ActivityType.TASK_DELETED)
     @Secured("ROLE_ADMIN")
     public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long taskId) {
         taskService.deleteTask(taskId);
