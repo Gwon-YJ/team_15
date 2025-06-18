@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -28,6 +27,6 @@ public class CreateTaskRequestDto {
     private final LocalDate dueDate;
 
     @NotNull(message = "우선순위는 필수입니다.")
-    private final TaskPriority priority; // Enum 타입으로 명확히 정의
+    private final TaskPriority priority;
 
 }
