@@ -10,9 +10,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
+    // 댓글 생성
     CommentResponseDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto);
-    Comment findCommentByIdOrElseThrow(Long commentId);
+    // 댓글 전체 조회
     Page<CommentResponseListDto> getComments(Long taskId, Pageable pageable);
+    // 댓글 수정
     CommentResponseDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto);
+    // 댓글 삭제
     CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, Long userId);
+    // commentId로 댓글 조회
+    Comment findCommentByIdOrElseThrow(Long commentId);
+
 }
