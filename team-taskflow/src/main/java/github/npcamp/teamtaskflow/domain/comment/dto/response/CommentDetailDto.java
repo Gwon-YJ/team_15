@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.comment.dto.response;
 
+import github.npcamp.teamtaskflow.domain.common.base.Identifiable;
 import github.npcamp.teamtaskflow.domain.common.entity.Comment;
 import github.npcamp.teamtaskflow.domain.common.entity.User;
 import lombok.Builder;
@@ -15,7 +16,7 @@ public record CommentDetailDto(
         UserDto user,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
-) {
+) implements Identifiable {
     @Builder
     public record UserDto(
             Long id,
@@ -41,4 +42,11 @@ public record CommentDetailDto(
                 .updatedAt(comment.getUpdatedAt())
                 .build();
     }
+
+    @Override
+    public Long getId(){
+        return this.id;
+    }
 }
+
+

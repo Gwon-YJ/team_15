@@ -2,11 +2,13 @@ package github.npcamp.teamtaskflow.domain.comment.controller;
 
 import github.npcamp.teamtaskflow.domain.comment.dto.request.CreateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.UpdateCommentRequestDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDeleteResponseDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
 import github.npcamp.teamtaskflow.domain.comment.service.CommentService;
+import github.npcamp.teamtaskflow.domain.common.aop.Logging;
+import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,13 +41,16 @@ public class CommentController {
 
     //댓글 전체 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<CommentPageDto>> getComments(
+    public ResponseEntity<ApiResponse<PageResponse<CommentDetailDto>>> getComments(
             @PathVariable Long taskId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        CommentPageDto responseDto = commentService.getComments(taskId, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
-    }
+//        Page<CommentDetailDto> page = commentService.getComments(taskId, pageable);
+//        PageResponse<CommentDetailDto> responseDto = new PageResponse<>(page);
+        PageResponse<CommentDetailDto> responseDto =commentService.getComments(taskId, pageable);
+//        return ResponseEntity.ok(ApiResponse.success("댓글 목록을 조회했습니다.", responseDto));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success("댓글이 성공적으로 조회되었습니다.", responseDto));    }
 
     //댓글 수정 - content만 수정하므로, patch사용함.
     @PatchMapping("/{commentId}")

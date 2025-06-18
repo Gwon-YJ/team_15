@@ -1,9 +1,11 @@
 package github.npcamp.teamtaskflow.domain.search.controller;
 
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
 import github.npcamp.teamtaskflow.domain.search.service.SearchService;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +38,12 @@ public class SearchController {
      * 예시: /search/comment?keyword={검색어}&page=1
      */
     @GetMapping("/comments")
-    public ResponseEntity<ApiResponse<CommentPageDto>> searchComments(
+    public ResponseEntity<ApiResponse<PageResponse<CommentDetailDto>>> searchComments(
             @RequestParam String keyword,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        CommentPageDto comments = searchService.searchComments(keyword, pageable);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(comments));
+        PageResponse<CommentDetailDto> responseDto = searchService.searchComments(keyword, pageable);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success("댓글이 성공적으로 조회되었습니다.", responseDto));
     }
 
 }

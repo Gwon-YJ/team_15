@@ -12,6 +12,7 @@ import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.service.TaskService;
 import github.npcamp.teamtaskflow.domain.user.service.UserService;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,11 +52,11 @@ public class CommentServiceImpl implements CommentService{
     //전체조회
     @Override
     @Transactional(readOnly = true)
-    public CommentPageDto getComments(Long taskId, Pageable pageable) {
+    public PageResponse<CommentDetailDto> getComments(Long taskId, Pageable pageable) {
+        Page<CommentDetailDto> comments = commentRepository.findAllByTaskId(taskId, pageable)
+                .map(CommentDetailDto::toDto);
 
-        Page<Comment> comments = commentRepository.findAllByTaskId(taskId, pageable); // 태스크 ID로 댓글 목록 조회
-
-        return CommentPageDto.toDto(comments);// 응답 DTO로 변환
+        return new PageResponse<>(comments);
     }
 
     //댓글 수정
