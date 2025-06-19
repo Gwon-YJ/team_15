@@ -1,5 +1,6 @@
 package github.npcamp.teamtaskflow.domain.task.service;
 
+import github.npcamp.teamtaskflow.domain.auth.exception.AuthException;
 import github.npcamp.teamtaskflow.domain.common.entity.Task;
 import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
@@ -10,9 +11,10 @@ import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.exception.TaskException;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
-import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
-import github.npcamp.teamtaskflow.domain.user.exception.UserException;
+import github.npcamp.teamtaskflow.domain.user.UserRoleEnum;
+import github.npcamp.teamtaskflow.domain.user.service.UserService;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,20 +27,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * Task 생성
      */
-
-    // TODO: 로그인한 사용자 추가
     @Override
     @Transactional
-    public CreateTaskResponseDto createTask(CreateTaskRequestDto req) {
+    public CreateTaskResponseDto createTask(CreateTaskRequestDto req, Long currentUserId) {
 
-        // 유저 조회
-        User assignee = userRepository.findById(req.getAssigneeId())
-                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        // Task 담당자 조회
+        User assignee = userService.findUserByIdOrElseThrow(req.getAssigneeId());
+
+        // 로그인한 사용자 조회
+        User creator = userService.findUserByIdOrElseThrow(currentUserId);
 
         // Task 생성 (기본 Status는 "할 일")
         Task task = Task.builder()
@@ -46,6 +48,7 @@ public class TaskServiceImpl implements TaskService {
                 .description(req.getDescription())
                 .priority(req.getPriority())
                 .assignee(assignee)
+                .creator(creator)
                 .dueDate(req.getDueDate())
                 .build();
 
@@ -70,19 +73,14 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskResponseDto> getTasks(Pageable pageable) {
-
-        // Task 페이지 조회
-        Page<Task> tasks = taskRepository.findAll(pageable);
-
-        return tasks.map(TaskResponseDto::toDto);
+    public PageResponse<TaskResponseDto> getTasks(Pageable pageable, TaskStatus status) {
+        Page<Task> tasks = taskRepository.findTasksByStatus(pageable, status);
+        return new PageResponse<>(tasks.map(TaskResponseDto::toDto));
     }
 
     /**
      * Task 제목, 내용, 우선순위, 담당자, 마감일 수정
      */
-
-    // TODO: 접근 권한 설정
     @Override
     @Transactional
     public TaskDetailResponseDto updateTask(Long taskId, UpdateTaskRequestDto req) {
@@ -91,8 +89,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = findTaskByIdOrElseThrow(taskId);
 
         // User 조회
-        User assignee = userRepository.findById(req.getAssigneeId())
-                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND)); // 추후 수정 예정
+        User assignee = userService.findUserByIdOrElseThrow(req.getAssigneeId());
 
         // Task 수정 (PUT)
         task.updateTask(req.getTitle(), req.getDescription(), req.getPriority(), assignee, req.getDueDate());
@@ -102,18 +99,25 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * Task 상태 수정
-     * TODO -> IN_PROGRESS -> DONE 순으로 변경 가능
+     * 할일 -> 진행 중 -> 완료 순으로 변경 가능
      */
-
-    // TODO: 접근 권한 설정
     @Override
     @Transactional
-    public TaskDetailResponseDto updateStatus(Long taskId, TaskStatus newStatus) {
+    public TaskDetailResponseDto updateStatus(Long taskId, TaskStatus newStatus, Long currentUserId) {
 
         // task 조회
         Task task = findTaskByIdOrElseThrow(taskId);
 
-        // TODO: 관리자만 변경 가능하도록 설정
+        // 현재 로그인된 사용자
+        User currentUser = userService.findUserByIdOrElseThrow(currentUserId);
+
+        boolean isAssignee = task.getAssignee().getId().equals(currentUserId);
+        boolean isAdmin    = currentUser.getRole() == UserRoleEnum.ADMIN;
+
+        // 로그인된 사용자가 ADMIN이 아니거나, 담당자가 아니면 ACCESS_DENIED
+        if (!isAssignee && !isAdmin) {
+            throw new AuthException(ErrorCode.ACCESS_DENIED);
+        }
 
         // 현재 상태에서 newStatus로 전환 가능 여부 검증
         TaskStatus oldStatus = task.getStatus();
@@ -121,7 +125,7 @@ public class TaskServiceImpl implements TaskService {
             throw new TaskException(ErrorCode.INVALID_STATUS_TRANSITION);
         }
 
-        // Task Status 수정(PATCH)
+        // Task Status 수정(PUT)
         task.updateStatus(newStatus);
 
         return TaskDetailResponseDto.toDto(taskRepository.saveAndFlush(task));

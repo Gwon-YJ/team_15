@@ -17,6 +17,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // @Valid 예외처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
@@ -28,11 +29,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure(errors));
     }
 
+    // HTTP 메시지 읽기(파싱) 예외처리
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure("요청 데이터의 타입이 올바르지 않습니다."));
     }
 
+    // CustomException 예외처리
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException e) {
         log.error("Exception occurred: ", e); // 전체 스택 트레이스 로그 출력
@@ -40,7 +43,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(ApiResponse.failure(e.getErrorCode().getMsg()));
     }
 
-    // @Secured 어노테이션
+    // 스프링 시큐리티 인가(Access Denied) 예외처리
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException e) {
         log.error("Exception occurred: ", e); // 전체 스택 트레이스 로그 출력

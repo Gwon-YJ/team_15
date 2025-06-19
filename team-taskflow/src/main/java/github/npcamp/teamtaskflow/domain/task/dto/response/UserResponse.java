@@ -15,11 +15,15 @@ public class UserResponse {
 
     private final Long id;
     private final String username;
+    private final String name;
+    private final String email;
 
     public static UserResponse toDto(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
+                .name(user.getName())
+                .email(user.getEmail())
                 .build();
     }
 }
