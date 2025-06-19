@@ -1,6 +1,5 @@
 package github.npcamp.teamtaskflow.domain.auth.dto.request;
 
-import github.npcamp.teamtaskflow.domain.user.UserRoleEnum;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

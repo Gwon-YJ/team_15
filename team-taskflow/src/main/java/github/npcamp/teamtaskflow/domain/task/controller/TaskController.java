@@ -3,11 +3,6 @@ package github.npcamp.teamtaskflow.domain.task.controller;
 import github.npcamp.teamtaskflow.domain.common.aop.Logging;
 import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
-import github.npcamp.teamtaskflow.domain.user.exception.UserException;
-import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
-import github.npcamp.teamtaskflow.global.exception.ErrorCode;
-import github.npcamp.teamtaskflow.domain.common.entity.User;
-
 import github.npcamp.teamtaskflow.domain.task.dto.request.CreateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateStatusRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateTaskRequestDto;
@@ -16,9 +11,9 @@ import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.service.TaskService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -39,10 +34,7 @@ public class TaskController {
     @Logging(ActivityType.TASK_CREATED)
     public ResponseEntity<ApiResponse<CreateTaskResponseDto>> createTask(@Valid @RequestBody CreateTaskRequestDto req,
                                                                          @AuthenticationPrincipal Long currentUserId) {
-
-        System.out.println(currentUserId.toString());
-
-        CreateTaskResponseDto res = taskService.createTask(req);
+        CreateTaskResponseDto res = taskService.createTask(req, currentUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res));
     }
 
@@ -53,9 +45,9 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<TaskResponseDto>>> getTasks(@PageableDefault(sort = "dueDate", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                       @RequestParam(required = false) TaskStatus status) {
-        Page<TaskResponseDto> tasks = taskService.getTasks(pageable);
+    public ResponseEntity<ApiResponse<PageResponse<TaskResponseDto>>> getTasks(@PageableDefault(sort = "dueDate", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                               @RequestParam TaskStatus status) {
+        PageResponse<TaskResponseDto> tasks = taskService.getTasks(pageable, status);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tasks));
     }
 
@@ -70,8 +62,9 @@ public class TaskController {
     @PutMapping("/{taskId}/status")
     @Logging(ActivityType.TASK_STATUS_CHANGED)
     public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateStatus(@PathVariable Long taskId,
-                                                                           @Valid @RequestBody UpdateStatusRequestDto req) {
-        TaskDetailResponseDto res = taskService.updateStatus(taskId, req.getStatus());
+                                                                           @Valid @RequestBody UpdateStatusRequestDto req,
+                                                                           @AuthenticationPrincipal Long currentUserId) {
+        TaskDetailResponseDto res = taskService.updateStatus(taskId, req.getStatus(), currentUserId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 

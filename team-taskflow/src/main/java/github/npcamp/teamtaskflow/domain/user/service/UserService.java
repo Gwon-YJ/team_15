@@ -6,6 +6,8 @@ import github.npcamp.teamtaskflow.domain.user.exception.UserException;
 import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +20,11 @@ public class UserService {
         User user = findUserByIdOrElseThrow(currentUserId);
         return UserResponseDto.toDto(user);
     }
+
+//    public Page<UserResponseDto> getUsers(Pageable pageable) {
+//        Page<User> users = userRepository.findAll(pageable);
+//        return users.map(UserResponseDto::toDto);
+//    }
 
 
 
