@@ -1,10 +1,12 @@
 package github.npcamp.teamtaskflow.domain.search.service;
 
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
 import github.npcamp.teamtaskflow.domain.comment.repository.CommentRepository;
 import github.npcamp.teamtaskflow.domain.common.entity.Comment;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,9 +40,10 @@ public class SearchServiceImpl implements SearchService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<CommentResponseListDto> searchComments(String keyword, Pageable pageable) {
-        Page<Comment> comments = commentRepository
-                .findByContentContainingIgnoreCase(keyword, pageable);
-        return comments.map(CommentResponseListDto::toDto);
+    public PageResponse<CommentDetailDto> searchComments(String keyword, Pageable pageable) {
+        Page<CommentDetailDto> comments = commentRepository
+                .findByContentContainingIgnoreCase(keyword, pageable)
+                .map(CommentDetailDto::toDto);
+        return new PageResponse<>(comments);
     }
 }
