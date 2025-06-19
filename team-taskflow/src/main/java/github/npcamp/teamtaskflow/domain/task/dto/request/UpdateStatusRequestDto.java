@@ -11,6 +11,6 @@ import lombok.Getter;
 public class UpdateStatusRequestDto {
 
     @NotNull(message = "상태는 필수입니다.")
-    private TaskStatus newStatus;
+    private TaskStatus status;
 
 }

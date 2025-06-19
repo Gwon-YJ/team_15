@@ -1,17 +1,28 @@
 package github.npcamp.teamtaskflow.domain.dashboard.service;
 
+import github.npcamp.teamtaskflow.domain.common.entity.Task;
+import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskCompletionResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TaskStatusResponseDto;
+import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TodayMyTaskListResponseDto;
 import github.npcamp.teamtaskflow.domain.dashboard.dto.response.TotalTaskResponseDto;
+import github.npcamp.teamtaskflow.domain.task.TaskPriority;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
+import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +38,12 @@ class DashboardServiceImplTest {
 
     @InjectMocks
     DashboardServiceImpl dashboardService;
+
+
+    @AfterEach
+    void clear() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void 대시보드_전체_태스크_수_조회_테스트() {
@@ -154,4 +171,41 @@ class DashboardServiceImplTest {
 
     }
 
-}
+
+
+        @Test
+        void 오늘_내_태스크_조회_테스트() {
+            // given
+            Long userId = 1L;
+            LocalDate today = LocalDate.now();
+
+            
+            //테스트용 객체 생성
+            List<Task> taskList = List.of(
+                    Task.builder()
+                            .id(100L)
+                            .title("테스트 작업")
+                            .priority(TaskPriority.HIGH)
+                            .status(TaskStatus.TODO)
+                            .assignee(User.builder().id(userId).build())
+                            .dueDate(today)
+                            .build()
+            );
+
+            List<TaskStatus> statusList = List.of(TaskStatus.TODO, TaskStatus.IN_PROGRESS);
+
+            Mockito.when(taskRepository.findSortedTasksByPriority(userId,  statusList, today)).thenReturn(taskList);
+
+            // when
+            List<TodayMyTaskListResponseDto> result = dashboardService.getTodayMyTask(userId);
+
+            // then
+            assertThat(result.get(0).getTaskId()).isEqualTo(100L);
+            assertThat(result.get(0).getTitle()).isEqualTo("테스트 작업");
+            assertThat(result.get(0).getPriority()).isEqualTo(TaskPriority.HIGH);
+            assertThat(result.get(0).getStatus()).isEqualTo(TaskStatus.TODO);
+        }
+    }
+
+
+

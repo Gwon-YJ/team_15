@@ -31,10 +31,6 @@ public class Comment extends BaseEntity{
     private User user; // user와도 다대일 관계로 join
 
     @Column(nullable = false)
-    private String username; // 그냥 문자열로 변경
-
-
-    @Column(nullable = false)
     private String content; // 댓글에 들어갈 내용
 
     @Column(name = "is_deleted", nullable = false)

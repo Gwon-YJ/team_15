@@ -2,17 +2,21 @@ package github.npcamp.teamtaskflow.domain.comment.service;
 
 import github.npcamp.teamtaskflow.domain.comment.dto.request.CreateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.UpdateCommentRequestDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDeleteResponseDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
 import github.npcamp.teamtaskflow.domain.common.entity.Comment;
-import org.springframework.data.domain.Page;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
-    CommentResponseDto createComment(Long taskId, String username, CreateCommentRequestDto requestDto);
+    // 댓글 생성
+    CommentDetailDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto);
+    // 댓글 전체 조회
+    PageResponse<CommentDetailDto> getComments(Long taskId, Pageable pageable);
+    // 댓글 수정
+    CommentDetailDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto);
+    // 댓글 삭제
+    void deleteComment(Long taskId, Long commentId, Long userId);
+    // commentId로 댓글 조회
     Comment findCommentByIdOrElseThrow(Long commentId);
-    Page<CommentResponseListDto> getComments(Long taskId, Pageable pageable);
-    CommentResponseDto updateContent(Long taskId, Long commentId, String username, UpdateCommentRequestDto requestDto);
-    CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, String username);
+
 }

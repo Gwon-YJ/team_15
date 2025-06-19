@@ -43,3 +43,5 @@ public class ActivityLog{
     @Column(nullable = false)
     private String changeContent; // 활동한 메세지
 }
+
+

@@ -4,6 +4,7 @@ import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.log.dto.ActivityLogDto;
 import github.npcamp.teamtaskflow.domain.log.service.ActivityLogService;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class ActivityLogController {
     private final ActivityLogService activityLogService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ActivityLogDto>>> getActivitiesLog(
+    public ResponseEntity<ApiResponse<PageResponse<ActivityLogDto>>> getActivitiesLog(
             @RequestParam(required = false) ActivityType activityType,
             @RequestParam(required = false) Long targetId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -35,7 +36,7 @@ public class ActivityLogController {
             @PageableDefault(sort = "timestamp", direction = Sort.Direction.DESC) Pageable pageable
     ){
 
-        Page<ActivityLogDto> logs = activityLogService.getActivitiesLog(activityType, targetId, start, end, pageable);
+        PageResponse<ActivityLogDto> logs = activityLogService.getActivitiesLog(activityType, targetId, start, end, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(logs));
     }
 

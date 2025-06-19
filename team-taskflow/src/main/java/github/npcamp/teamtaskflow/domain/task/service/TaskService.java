@@ -7,20 +7,20 @@ import github.npcamp.teamtaskflow.domain.task.dto.request.UpdateTaskRequestDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.CreateTaskResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskDetailResponseDto;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
-import org.springframework.data.domain.Page;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface TaskService {
 
-    CreateTaskResponseDto createTask(CreateTaskRequestDto req);
+    CreateTaskResponseDto createTask(CreateTaskRequestDto req, Long currentUserId);
 
     TaskDetailResponseDto getTask(Long taskId);
 
-    Page<TaskResponseDto> getTasks(Pageable pageable);
+    PageResponse<TaskResponseDto> getTasks(Pageable pageable, TaskStatus status);
 
     TaskDetailResponseDto updateTask(Long taskId, UpdateTaskRequestDto req);
 
-    TaskDetailResponseDto updateStatus(Long taskId, TaskStatus newStatus);
+    TaskDetailResponseDto updateStatus(Long taskId, TaskStatus newStatus, Long currentUserId);
 
     void deleteTask(Long taskId);
 
