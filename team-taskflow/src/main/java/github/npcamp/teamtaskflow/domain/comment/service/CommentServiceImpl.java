@@ -2,9 +2,8 @@ package github.npcamp.teamtaskflow.domain.comment.service;
 
 import github.npcamp.teamtaskflow.domain.comment.dto.request.CreateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.UpdateCommentRequestDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDeleteResponseDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentResponseListDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
+import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
 import github.npcamp.teamtaskflow.domain.comment.exception.CommentException;
 import github.npcamp.teamtaskflow.domain.comment.repository.CommentRepository;
 import github.npcamp.teamtaskflow.domain.common.entity.Comment;
@@ -13,6 +12,7 @@ import github.npcamp.teamtaskflow.domain.common.entity.User;
 import github.npcamp.teamtaskflow.domain.task.service.TaskService;
 import github.npcamp.teamtaskflow.domain.user.service.UserService;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService{
     //댓글 생성
     @Override
     @Transactional
-    public CommentResponseDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto) {
+    public CommentDetailDto createComment(Long taskId, Long userId, CreateCommentRequestDto requestDto) {
 
         Task task = taskService.findTaskByIdOrElseThrow(taskId); // 태스크 존재 여부 확인
         User user = userService.findUserByIdOrElseThrow(userId); // 사용자 존재 여부 확인
@@ -40,30 +40,29 @@ public class CommentServiceImpl implements CommentService{
         Comment comment = Comment.builder() // 댓글 객체 생성
                 .task(task)
                 .user(user)
-                .username(user.getUsername())
                 .content(requestDto.content())
                 .build();
 
         Comment saved = commentRepository.save(comment); // 댓글 저장
 
-        return CommentResponseDto.toDto(saved); // 응답 DTO 반환
+        return CommentDetailDto.toDto(saved); // 응답 DTO 반환
     }
 
 
     //전체조회
     @Override
     @Transactional(readOnly = true)
-    public Page<CommentResponseListDto> getComments(Long taskId, Pageable pageable) {
+    public PageResponse<CommentDetailDto> getComments(Long taskId, Pageable pageable) {
+        Page<CommentDetailDto> comments = commentRepository.findAllByTaskId(taskId, pageable)
+                .map(CommentDetailDto::toDto);
 
-        Page<Comment> comments = commentRepository.findAllByTaskId(taskId, pageable); // 태스크 ID로 댓글 목록 조회
-
-        return comments.map(CommentResponseListDto::toDto);// 응답 DTO로 변환
+        return new PageResponse<>(comments);
     }
 
     //댓글 수정
     @Override
     @Transactional
-    public CommentResponseDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto) {
+    public CommentDetailDto updateContent(Long taskId, Long commentId, Long userId, UpdateCommentRequestDto requestDto) {
 
         Task task = taskService.findTaskByIdOrElseThrow(taskId);
         Comment comment = findCommentByIdOrElseThrow(commentId);
@@ -82,13 +81,13 @@ public class CommentServiceImpl implements CommentService{
 
         commentRepository.flush();
 
-        return CommentResponseDto.toDto(comment); // 수정된 댓글 반환
+        return CommentDetailDto.toDto(comment); // 수정된 댓글 반환
     }
 
     //댓글 삭제
     @Override
     @Transactional
-    public CommentDeleteResponseDto deleteComment(Long taskId, Long commentId, Long userId) {
+    public void deleteComment(Long taskId, Long commentId, Long userId) {
 
         Task task = taskService.findTaskByIdOrElseThrow(taskId);
         Comment comment = findCommentByIdOrElseThrow(commentId);
@@ -103,8 +102,6 @@ public class CommentServiceImpl implements CommentService{
         }
 
         commentRepository.delete(comment); // 댓글 내용 삭제 (soft)
-
-        return CommentDeleteResponseDto.toDto(comment); //삭제된 댓글 반환
     }
 
     // commentId로 댓글을 조회하고 없으면 예외
