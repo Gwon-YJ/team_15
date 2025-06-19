@@ -108,7 +108,8 @@ public class LoggingAspect {
 
         // 공통 로깅 처리
         activityLogService.saveActivityLog(userId, ip, method, url, activityType, targetId, message);
-        log.info("ActivityLog: {}", message);
+        log.info("[ACTIVITY LOG] userId={}, ip={}, method={}, url={}, activityType={}, targetId={}, message={}",
+                userId, ip, method, url, activityType, targetId, message);
 
         return result;
     }
