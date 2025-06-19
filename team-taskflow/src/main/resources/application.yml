@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/${DB_SCHEMA}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url:
+    username:
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   application:
     name: taskflow
