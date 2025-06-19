@@ -12,6 +12,7 @@ import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import github.npcamp.teamtaskflow.domain.user.exception.UserException;
 import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
 import github.npcamp.teamtaskflow.global.exception.ErrorCode;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -64,11 +65,11 @@ public class ActivityLogServiceImpl implements ActivityLogService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ActivityLogDto> getActivitiesLog(ActivityType activityType,
-                                                 Long targetId,
-                                                 LocalDate startDate,
-                                                 LocalDate endDate,
-                                                 Pageable pageable) {
+    public PageResponse<ActivityLogDto> getActivitiesLog(ActivityType activityType,
+                                                         Long targetId,
+                                                         LocalDate startDate,
+                                                         LocalDate endDate,
+                                                         Pageable pageable) {
 
         // 시작일이 null이면 2000년 1월 1일 부터
         LocalDateTime startDateTime = (startDate != null)
@@ -89,6 +90,6 @@ public class ActivityLogServiceImpl implements ActivityLogService{
                 activityType, targetId, startDateTime, endDateTime, pageable
         );
 
-        return logs.map(ActivityLogDto::toDto);
+        return new PageResponse<>(logs.map(ActivityLogDto::toDto));
     }
 }

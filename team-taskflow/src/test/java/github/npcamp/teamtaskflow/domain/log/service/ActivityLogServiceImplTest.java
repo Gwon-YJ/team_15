@@ -8,6 +8,7 @@ import github.npcamp.teamtaskflow.domain.log.repository.ActivityLogRepository;
 import github.npcamp.teamtaskflow.domain.task.repository.TaskRepository;
 import github.npcamp.teamtaskflow.domain.user.UserRoleEnum;
 import github.npcamp.teamtaskflow.domain.user.repository.UserRepository;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -100,7 +101,7 @@ class ActivityLogServiceImplTest {
                 .willReturn(resultPage);
 
         // when
-        Page<ActivityLogDto> result = activityLogService.getActivitiesLog(
+        PageResponse<ActivityLogDto> result = activityLogService.getActivitiesLog(
                 activityType, targetId, start, end, pageable
         );
 

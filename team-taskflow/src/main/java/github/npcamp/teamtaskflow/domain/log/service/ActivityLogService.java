@@ -5,6 +5,7 @@ import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import github.npcamp.teamtaskflow.domain.log.dto.ActivityLogDto;
 import github.npcamp.teamtaskflow.domain.log.repository.ActivityLogRepository;
 import github.npcamp.teamtaskflow.domain.task.TaskStatus;
+import github.npcamp.teamtaskflow.global.payload.PageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,6 +17,6 @@ public interface ActivityLogService {
 
     void saveActivityLog(Long userId, String ip, String method, String url, ActivityType activityType, Long targetId, String message);
 
-    Page<ActivityLogDto> getActivitiesLog(ActivityType activityType, Long targetId, LocalDate start, LocalDate end, Pageable pageable);
+    PageResponse<ActivityLogDto> getActivitiesLog(ActivityType activityType, Long targetId, LocalDate start, LocalDate end, Pageable pageable);
 
 }
