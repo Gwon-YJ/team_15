@@ -3,10 +3,8 @@ package github.npcamp.teamtaskflow.domain.comment.service;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.CreateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.request.UpdateCommentRequestDto;
 import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
 import github.npcamp.teamtaskflow.domain.common.entity.Comment;
 import github.npcamp.teamtaskflow.global.payload.PageResponse;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
