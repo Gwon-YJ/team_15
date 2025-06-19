@@ -1,7 +1,6 @@
 package github.npcamp.teamtaskflow.domain.search.controller;
 
 import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentDetailDto;
-import github.npcamp.teamtaskflow.domain.comment.dto.response.CommentPageDto;
 import github.npcamp.teamtaskflow.domain.search.service.SearchService;
 import github.npcamp.teamtaskflow.domain.task.dto.response.TaskResponseDto;
 import github.npcamp.teamtaskflow.global.payload.ApiResponse;
