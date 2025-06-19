@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -18,11 +20,11 @@ public class UserController {
 
     private final UserService userService;
 
-//    @GetMapping
-//    public ResponseEntity<ApiResponse<Page<UserResponseDto>>> getUsers(@PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
-//        Page<UserResponseDto> users = userService.getUsers(pageable);
-//        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(users));
-//    }
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserResponseDto>>> getUsers() {
+        List<UserResponseDto> users = userService.getUsers();
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(users));
+    }
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponseDto>> getCurrentUser(@AuthenticationPrincipal Long currentUserId) {

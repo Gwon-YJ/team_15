@@ -59,11 +59,11 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
-    @PutMapping("/{taskId}/status")
+    @PatchMapping("/{taskId}/status")
     @Logging(ActivityType.TASK_STATUS_CHANGED)
-    public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateStatus(@PathVariable Long taskId,
-                                                                           @Valid @RequestBody UpdateStatusRequestDto req,
-                                                                           @AuthenticationPrincipal Long currentUserId) {
+    public ResponseEntity<ApiResponse<TaskDetailResponseDto>> updateStatus(@AuthenticationPrincipal Long currentUserId,
+                                                                           @PathVariable Long taskId,
+                                                                           @Valid @RequestBody UpdateStatusRequestDto req) {
         TaskDetailResponseDto res = taskService.updateStatus(taskId, req.getStatus(), currentUserId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }

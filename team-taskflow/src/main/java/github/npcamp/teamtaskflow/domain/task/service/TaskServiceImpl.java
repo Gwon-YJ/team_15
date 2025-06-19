@@ -125,7 +125,7 @@ public class TaskServiceImpl implements TaskService {
             throw new TaskException(ErrorCode.INVALID_STATUS_TRANSITION);
         }
 
-        // Task Status 수정(PUT)
+        // Task Status 수정(PATCH)
         task.updateStatus(newStatus);
 
         return TaskDetailResponseDto.toDto(taskRepository.saveAndFlush(task));
