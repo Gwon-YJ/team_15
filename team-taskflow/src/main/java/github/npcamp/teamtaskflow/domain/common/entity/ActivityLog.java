@@ -4,13 +4,15 @@ import github.npcamp.teamtaskflow.domain.log.ActivityType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "ActivityLog")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ActivityLog extends BaseEntity{
+public class ActivityLog{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +38,10 @@ public class ActivityLog extends BaseEntity{
     private Long targetId; // 대상 ID (예: 태스크 ID, 댓글 ID 등)
 
     @Column(nullable = false)
+    private LocalDateTime timestamp;
+
+    @Column(nullable = false)
     private String changeContent; // 활동한 메세지
 }
+
+
